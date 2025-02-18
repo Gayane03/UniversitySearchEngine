@@ -1,0 +1,222 @@
+﻿@attribute [Route(Route.Registration)]
+@using SharedLibrary.RequestModels;
+@using SharedLibrary.ResponseModels;
+@inject RegistrationRequestValidator registrationRequestValidator;
+@inject LoginRequestValidator loginRequestValidator
+@inject LocalStorageHelper? localStorageHelper;
+@inject ApiController? apiController;
+@inject NavigationManager? navigationManager;
+@inject ResponseMessageUtile? responseMessageUtile;
+@layout MainLayout;
+
+@if (isRegistrationProcess)
+{
+	<MudForm @ref="formRegistration" Validation="registrationRequestValidator.ValidateValue" Model="@registrationModel">
+		<MudCardContent>
+
+
+			<MudItem>
+				<MudTextField T="string"
+							  @bind-Value="registrationModel.FirstName"
+							  Label="First name"
+							  For="@(() => registrationModel.FirstName)"
+							  Immediate="true" />
+			</MudItem>
+
+			<MudItem>
+				<MudTextField T="string"
+							  @bind-Value="registrationModel.LastName"
+							  Label="Last name"
+							  For="@(() => registrationModel.LastName)"
+							  Immediate="true" />
+			</MudItem>
+
+
+			<MudTextField T="string"
+						  @bind-Value="registrationModel.Email"
+						  Label="Email"
+						  For="@(() => registrationModel.Email)"
+						  Immediate="true" />
+
+			<MudTextField T="string"
+						  @bind-Value="registrationModel.Password"
+						  Label="Password"
+						  For="@(() => registrationModel.Password)"
+						  Immediate="true" />
+
+			<MudTextField T="string"
+						  @bind-Value="registrationModel.RepeatPassword"
+						  Label="RepeatPassword"
+						  For="@(() => registrationModel.RepeatPassword)"
+						  Immediate="true" />
+			
+
+			<MudCardActions Class="pl-0">
+				<MudGrid Spacing="2" Class="mt-2">
+
+					<MudItem md="12">
+						<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => OnRegister()">
+							@RegisterText
+						</MudButton>
+					</MudItem>
+
+					<MudItem md="12">
+						<MudButton OnClick="() => OpenLoginCard()">
+							@LoginText
+						</MudButton>
+					</MudItem>
+
+				</MudGrid>
+			</MudCardActions>
+
+		</MudCardContent>
+
+	</MudForm>
+}
+else
+{
+	<MudForm @ref="formLogin" Validation="loginRequestValidator.ValidateValue" Model="@loginRequest">
+
+		<MudCardContent>
+
+			<MudItem>
+				<MudTextField T="string"
+							  @bind-Value="loginRequest.Email"
+							  Label="Email"
+							  For="@(() => loginRequest.Email)"
+							  Immediate="true" />
+			</MudItem>
+
+			<MudItem>
+				<MudTextField T="string"
+							  @bind-Value="loginRequest.Password"
+							  Label="Password"
+							  For="@(() => loginRequest.Password)"
+							  Immediate="true" />
+			</MudItem>
+
+			<MudCardActions Class="pl-0">
+				<MudGrid Spacing="2" Class="mt-2">
+
+					<MudItem md="12">
+						<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => OnLogin()">
+							@LoginText
+						</MudButton>
+					</MudItem>
+
+					<MudItem md="12">
+						<MudButton OnClick="() => OpenRegisterCard()">
+							@RegisterText
+						</MudButton>
+					</MudItem>
+
+				</MudGrid>
+			</MudCardActions>
+
+		</MudCardContent>
+	</MudForm>
+
+}
+
+@code{
+
+	private MudForm? formRegistration;
+	private MudForm? formLogin;
+
+	private const string RegisterText = "Register";
+	private const string LoginText = "Login";
+
+	private SearchUniversityUI.Models.RegistrationModel registrationModel = new();
+	private EmailVerificationTokenResponse? emailVerificationTokenResponse;
+
+	private bool isRegistrationProcess = true;
+
+	private LoginRequest loginRequest = new();
+	private LoginResponse? loginResponse;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		await base.OnInitializedAsync();
+	}
+	
+
+	private async Task OnRegister()
+	{
+		try
+		{
+			await formRegistration!.Validate();
+
+			if (formRegistration.IsValid)
+			{
+				var registrationRequest = new RegistrationRequest()
+					{
+						FirstName = registrationModel.FirstName,
+						LastName = registrationModel.LastName,
+						Email = registrationModel.Email,
+						Password = registrationModel.Password
+					};
+
+				var response = await apiController!.RegisterUser(registrationRequest);
+				emailVerificationTokenResponse = await responseMessageUtile.HandleResponse<EmailVerificationTokenResponse>(response);
+
+				string? token = emailVerificationTokenResponse?.VerificationToken;
+				if (string.IsNullOrEmpty(token))
+				{
+					throw new Exception("Token is null.");
+				}
+
+				await localStorageHelper!.SaveToken(TokenStorageName.EmailVerification, token);
+
+				navigationManager!.NavigateTo(Route.Verification);
+			}
+		}
+		catch (Exception ex)
+		{
+			//navigationManager?.NavigateTo($"/{Route.NotFound}?error={Uri.EscapeDataString(ex.Message)}");
+			navigationManager?.NavigateTo(Route.NotFound);
+		}
+	}
+
+	private async Task OnLogin()
+	{
+		try
+		{
+			await formLogin!.Validate();
+
+			if (formLogin.IsValid)
+			{
+				var response = await apiController!.LoginUser(loginRequest);
+				loginResponse = await responseMessageUtile!.HandleResponse<LoginResponse>(response);
+
+				string? token = loginResponse?.Token;
+				if (string.IsNullOrEmpty(token))
+				{
+					throw new Exception("Token is null.");
+				}
+
+				await localStorageHelper!.RemoveToken(TokenStorageName.EmailVerification);
+				await localStorageHelper.SaveToken(TokenStorageName.UserAccess, token);
+
+				navigationManager!.NavigateTo(Route.BaseMigration);
+			}
+		}
+		catch (Exception ex)
+		{
+			navigationManager?.NavigateTo(Route.NotFound);
+
+			//navigationManager?.NavigateTo($"/{Route.NotFound}?error={Uri.EscapeDataString(ex.Message)}");
+		}
+	}
+
+	private void OpenLoginCard()
+	{
+		isRegistrationProcess = false;
+
+	}
+
+	private void OpenRegisterCard()
+	{
+		isRegistrationProcess = true;
+	}
+}
