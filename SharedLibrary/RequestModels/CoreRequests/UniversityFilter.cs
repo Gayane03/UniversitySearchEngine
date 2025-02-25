@@ -4,6 +4,7 @@ namespace SharedLibrary.RequestModels.CoreRequests
 {
 	public class UniversityFilter
 	{
-		public City City { get; set; } = City.Yerevan;
+		public string? QueryUniversityName { get; set; }
+		public City? City { get; set; } 
 	}
 }

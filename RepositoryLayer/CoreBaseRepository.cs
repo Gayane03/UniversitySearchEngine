@@ -5,7 +5,7 @@ using System.Text;
 
 namespace RepositoryLayer
 {
-	public abstract class CoreBaseRepository 
+	public abstract class CoreBaseRepository
 	{
 		private readonly string connectionString;
 
@@ -16,17 +16,67 @@ namespace RepositoryLayer
 		private const int SingleUserProcessCount = 1;
 
 
- 		protected CoreBaseRepository(IConfiguration configuration)
+		protected CoreBaseRepository(IConfiguration configuration)
 		{
 			connectionString = configuration?.GetConnectionString("DefaultConnection");
 		}
 
-	
-		protected async Task<TResult?>? Get<T,TResult>(
-			Func<SqlDataReader,TResult> func,
-			Dictionary<string,object>? parameters = null,
-			string? whereConditionBody =  null)
-	    {
+		protected async Task<List<TResult>> GetAll<T, TResult>(Func<SqlDataReader, List<TResult>> func,
+				Dictionary<string, object>? parameters = null,
+				string? whereConditionBody = null)
+		{
+			try
+			{
+				sqlConnection = OpenSqlConnection();
+
+				var modelProperties = BaseRepositoryHelper.GetPropertyNames<TResult>();
+				var modelPropertiesJoinForQuery = string.Join(", ", modelProperties);
+				var commandMessage = $"SELECT {modelPropertiesJoinForQuery} FROM [{typeof(T).Name}] ";
+
+				sqlCommand = OpenSqlCommand(commandMessage, sqlConnection);
+
+				if (parameters is not null && parameters.Any())
+				{
+					foreach (var parameter in parameters)
+					{
+						sqlCommand.Parameters.AddWithValue(@parameter.Key, parameter.Value);
+					}
+				}
+
+				if (whereConditionBody is not null)
+				{
+					sqlCommand.CommandText += "WHERE " + whereConditionBody;
+				}
+
+				sqlDataReader = await OpenSqlDataReader(sqlCommand);
+
+				if (sqlDataReader.Read())
+				{
+					return func.Invoke(sqlDataReader);
+				}
+
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Process is nor correct `{ex.Message}");
+			}
+			finally
+			{
+				Dispose();
+			}
+
+			return default(List<TResult>);
+		}
+
+
+
+
+
+		protected async Task<TResult?>? Get<T, TResult>(
+			Func<SqlDataReader, TResult> func,
+			Dictionary<string, object>? parameters = null,
+			string? whereConditionBody = null)
+		{
 
 			try
 			{
@@ -53,22 +103,22 @@ namespace RepositoryLayer
 
 				sqlDataReader = await OpenSqlDataReader(sqlCommand);
 
-				if(sqlDataReader.Read())
+				if (sqlDataReader.Read())
 				{
 					return func.Invoke(sqlDataReader);
 				}
 				else
 				{
-					
+
 				}
 			}
 			catch (Exception ex)
 			{
-                Console.WriteLine($"Process is nor correct `{ex.Message}");			
+				Console.WriteLine($"Process is nor correct `{ex.Message}");
 			}
 			finally
 			{
-				Dispose();		
+				Dispose();
 			}
 
 			return default(TResult);
@@ -77,7 +127,7 @@ namespace RepositoryLayer
 
 
 
-		protected async Task<int> Insert<T>(Dictionary<string,object> parameteres)
+		protected async Task<int> Insert<T>(Dictionary<string, object> parameteres)
 		{
 
 			try
@@ -95,7 +145,7 @@ namespace RepositoryLayer
 
 				var insertedId = await sqlCommand.ExecuteScalarAsync();
 
-				if(insertedId != DBNull.Value)
+				if (insertedId != DBNull.Value)
 				{
 					return Convert.ToInt32(insertedId);
 				}
@@ -124,7 +174,7 @@ namespace RepositoryLayer
 
 				var commandBuilder = new StringBuilder($"UPDATE [{typeof(T).Name}] SET ");
 
-				commandBuilder = BaseRepositoryHelper.SetUpdatingParametersInQuery(commandBuilder,updatingParameters);
+				commandBuilder = BaseRepositoryHelper.SetUpdatingParametersInQuery(commandBuilder, updatingParameters);
 
 				if (whereConditionBody is not null)
 				{
@@ -149,7 +199,7 @@ namespace RepositoryLayer
 			}
 			catch (Exception ex)
 			{
-				throw new Exception();			
+				throw new Exception();
 			}
 			finally
 			{
@@ -157,7 +207,7 @@ namespace RepositoryLayer
 			}
 		}
 
-		protected async Task<bool> Delete<T>(Dictionary<string,object>? parameters =  null,string? whereConditionBody = null)
+		protected async Task<bool> Delete<T>(Dictionary<string, object>? parameters = null, string? whereConditionBody = null)
 		{
 			try
 			{
@@ -168,7 +218,7 @@ namespace RepositoryLayer
 
 				if (whereConditionBody is not null)
 				{
-					sqlCommand.CommandText += " WHERE " +  whereConditionBody;
+					sqlCommand.CommandText += " WHERE " + whereConditionBody;
 					BaseRepositoryHelper.GenerateParametersValues(parameters!, sqlCommand);
 				}
 
@@ -181,7 +231,7 @@ namespace RepositoryLayer
 				{
 					throw new Exception();
 				}
-				
+
 			}
 			catch (Exception ex)
 			{
@@ -194,20 +244,20 @@ namespace RepositoryLayer
 		}
 
 
-		protected SqlConnection OpenSqlConnection(string? remoteConnection =  null)
+		protected SqlConnection OpenSqlConnection(string? remoteConnection = null)
 		{
 			SqlConnection? localConnection = null;
 
-			if(remoteConnection is not null)
+			if (remoteConnection is not null)
 			{
-                localConnection = new SqlConnection(remoteConnection);
-            }
+				localConnection = new SqlConnection(remoteConnection);
+			}
 			else
 			{
-                localConnection = new SqlConnection(connectionString);
-            }
+				localConnection = new SqlConnection(connectionString);
+			}
 
-            localConnection.Open();
+			localConnection.Open();
 			return localConnection;
 		}
 		private SqlCommand OpenSqlCommand(string commandMessage, SqlConnection connection)
@@ -226,6 +276,6 @@ namespace RepositoryLayer
 			sqlDataReader?.Close();
 			sqlCommand?.Dispose();
 			sqlConnection?.Dispose();
-		}		
+		}
 	}
 }

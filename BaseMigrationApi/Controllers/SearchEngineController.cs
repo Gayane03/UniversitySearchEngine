@@ -15,7 +15,9 @@ namespace SearchUniversityAPI.Controllers
 	{
 		private readonly ISearchEngineService searchEngineService;
 
-        public SearchEngineController(ISearchEngineService searchEngineService,IJwtTokenHandlerService jwtTokenHandlerService)
+        public SearchEngineController(
+			ISearchEngineService searchEngineService,
+			IJwtTokenHandlerService jwtTokenHandlerService)
         {
 			this.searchEngineService = searchEngineService;
 		}

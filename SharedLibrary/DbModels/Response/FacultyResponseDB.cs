@@ -1,8 +1,8 @@
-﻿namespace SharedLibrary.ResponseModels.CoreResponse
+﻿namespace SharedLibrary.DbModels.Response
 {
-	public class FacultyResponse
+	public class FacultyResponseDB
 	{
-		public int UniversityId { get; set; }	
+		public int UniversityId { get; set; }
 		public int FacultyId { get; set; }
 
 		public string FacultyName { get; set; }
@@ -12,15 +12,13 @@
 		public int PaidSpots { get; set; }//  vcaropvii texer
 		public int TuitionFee { get; set; } //  vardz
 
-		public double LastYearMinScoreForFreeTrain { get; set; }	
+		public double LastYearMinScoreForFreeTrain { get; set; }
 
-		public List<string> EntranceExam { get; set; }
-		public List<int> LastTwoYearFeeTrends {  get; set; }	// naxord 2 tarva  vardzeri chap@
-
+		public int TwoYearsAgoFee { get; set; }
+		public int OneYearsAgoFee { get; set; }
 
 		// for favourite
 		public string? UniversityName { get; set; } //+ masnacux
-		public bool? IsFavorite { get; set; }
-		
+
 	}
 }

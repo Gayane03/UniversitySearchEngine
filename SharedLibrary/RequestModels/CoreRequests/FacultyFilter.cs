@@ -3,9 +3,9 @@ namespace SharedLibrary.RequestModels.CoreRequests
 {
 	public class FacultyFilter
 	{
-		public int? UniversityId { get; set; }
-		public int? MinimumScoreForFreeTraining { get; set; }
-		public int? TuituionFee { get; set; }
-		public List<string>? EntranceExams { get; set; }	
+		public string? QueryFacultyName { get; set; }
+		public double? MinimumScoreForFreeTraining { get; set; }//naxord tarva amenacacr gnahatakan@
+		public int? MaxTuitionFee { get; set; } //usman vardz
+		public List<string>? EntranceExams { get; set; } //qnnutyunneri anunner	
 	}
 }

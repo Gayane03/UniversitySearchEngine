@@ -6,16 +6,15 @@ namespace BusinessLayer.Services.CoreServices
 {
 	public interface ISearchEngineService
 	{
-
-		Task<Result<IEnumerable<UniversityResponse>>> GetUniversities(UniversitiesSearchingRequest universitiesSearchingRequest);
-		Task<Result<IEnumerable<FacultyResponse>>> GetFaculties(FacultiesSearchingRequest facultiesSearchingRequest);
+		Task<Result<List<UniversityResponse>>> GetUniversities(UniversitiesSearchingRequest universitiesSearchingRequest);
+		Task<Result<List<FacultyResponse>>> GetFaculties(FacultiesSearchingRequest facultiesSearchingRequest);
 		Task<Result<FacultyResponse>> GetFaculty(int facultyId);	
 
 
 
-		Task<Result<IEnumerable<FavoriteResponse>>> GetFavorites(int userId);
-		Task AddFavorite(int userId, FavoriteRequest favoriteRequest);
-		Task RemoveFavorite(int favoriteId);
+		Task<Result<List<FacultyResponse>>> GetFavorites(int userId);
+		Task AddFavorite(int userId, int facultyId);
+		Task RemoveFavorite(int facultyId);
 
 
 	}
