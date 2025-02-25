@@ -19,8 +19,6 @@ namespace BusinessLayer.Services.CoreServices
 			this.mapper = mapper;	
         }
 
-
-
 		public async Task<Result<List<UniversityResponse>>> GetUniversities(UniversitiesSearchingRequest universitiesSearchingRequest)
 		{
 			try
@@ -34,7 +32,7 @@ namespace BusinessLayer.Services.CoreServices
 					var query = filterUniversity.QueryUniversityName;
 					var city = filterUniversity.City; 
 
-					if(query is not null)
+					if(!string.IsNullOrEmpty(query) && query != "string")
 					{
 						universities =  universities
 							.Where(u => u.Name.Contains(query, StringComparison.OrdinalIgnoreCase) 
@@ -52,9 +50,11 @@ namespace BusinessLayer.Services.CoreServices
 				var perPage = universitiesSearchingRequest.PerPage!.Value;
 				var dataStartPoint = (page - 1) * perPage;
 
-				universities = universities.Skip(dataStartPoint).Take(perPage).ToList();
-
-
+                if (universities.Count > perPage)
+                {
+                    universities = universities.Skip(dataStartPoint).Take(perPage).ToList();
+                }
+               
 				var universitiesResponse = new List<UniversityResponse>();
 
 				foreach (var university in universities)
@@ -90,14 +90,26 @@ namespace BusinessLayer.Services.CoreServices
 					facultiesResponse.Add(currentFaculty);
 				}
 
-				foreach (var exam in exams)
+				foreach (var faculty in facultiesResponse)
 				{
-					var faculty = facultiesResponse.FirstOrDefault(f => f.FacultyId == exam.FacultyId);
-					if (faculty != null)
+					var currentFacultyExams = exams.Where(exams => exams.FacultyId == faculty.FacultyId);
+
+                    foreach (var exam in currentFacultyExams)
 					{
-						faculty.EntranceExam.Add(exam.Name);
+						faculty.EntranceExam.Add(exam.Name);	
 					}
 				}
+
+
+
+    //            foreach (var exam in exams)
+				//{
+				//	var faculty = facultiesResponse.FirstOrDefault(f => f.FacultyId == exam.FacultyId);
+				//	if (faculty != null)
+				//	{
+				//		faculty.EntranceExam.Add(exam.Name);
+				//	}
+				//}
 
 				var filterFaculty = facultiesSearchingRequest.FacultyFilter;
 
@@ -108,29 +120,29 @@ namespace BusinessLayer.Services.CoreServices
 					var entranceExams = filterFaculty.EntranceExams;
 					var maxTuitionFee = filterFaculty.MaxTuitionFee;
 
-					if (query is not null)
-					{
+                    if (!string.IsNullOrEmpty(query) && query != "string")
+                    {
 						facultiesResponse = facultiesResponse
 							.Where(f => f.FacultyName.Contains(query, StringComparison.OrdinalIgnoreCase)
 									  || FilterHelper.IsAbbreviationMatch(f.FacultyName, query))
 							.ToList();
 					}
 
-					if (minimumScoreForFreeTraining is not null)
+					if (minimumScoreForFreeTraining is not null && minimumScoreForFreeTraining != default(double))
 					{
 						facultiesResponse = facultiesResponse
 							.Where(u => u.LastYearMinScoreForFreeTrain == minimumScoreForFreeTraining)
 							.ToList();
 					}
 
-					if ( maxTuitionFee is not null)
+					if (maxTuitionFee is not null && maxTuitionFee != default(int))
 					{
 						facultiesResponse = facultiesResponse
 							.Where(f => maxTuitionFee >= f.TuitionFee)
 							.ToList();
 					}
 
-					if(entranceExams is not null && entranceExams.Any())
+					if(entranceExams is not null && entranceExams.Any() && !entranceExams.Any(e => e == "string" || string.IsNullOrEmpty(e)))
 					{
 						facultiesResponse = facultiesResponse
 							.Where(faculty => entranceExams.Any(exam => faculty.EntranceExam.Contains(exam)))
@@ -143,7 +155,10 @@ namespace BusinessLayer.Services.CoreServices
 				var perPage = facultiesSearchingRequest.PerPage!.Value;
 				var dataStartPoint = (page - 1) * perPage;
 
-				facultiesResponse = facultiesResponse.Skip(dataStartPoint).Take(perPage).ToList();
+				if(facultiesResponse.Count > perPage)
+				{
+                    facultiesResponse = facultiesResponse.Skip(dataStartPoint).Take(perPage).ToList();
+                }
 
 				return Result<List<FacultyResponse>>.Success(facultiesResponse);
 			}
@@ -166,7 +181,7 @@ namespace BusinessLayer.Services.CoreServices
 
 				facultyResponse.EntranceExam = new List<string>();
 
-				foreach (var exam in exams.Where(e => e.FacultyId == faculty.FacultyId))
+				foreach (var exam in exams.Where(e => e.FacultyId == faculty.Id))
 				{
 					facultyResponse.EntranceExam.Add(exam.Name);	
 				}

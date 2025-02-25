@@ -25,6 +25,7 @@ namespace BusinessLayer.Helper
 
 			// repository layer
 			services.AddScoped<IRegistrationRepository, RegistrationRepository>();
+			services.AddScoped<ISearchEngineRepository, SearchEngineRepository>();	
 
 			return services;
 		}

@@ -15,21 +15,21 @@ namespace SearchUniversityAPI.Controllers
 		private readonly ISearchEngineService searchEngineService;
 		private readonly IJwtTokenHandlerService jwtTokenHandlerService;
 
-		private readonly int UserId;
+		private int UserId;
 		public FavoriteController(ISearchEngineService searchEngineService, IJwtTokenHandlerService jwtTokenHandlerService)
 		{
 			this.searchEngineService = searchEngineService;
 			this.jwtTokenHandlerService = jwtTokenHandlerService;
-
-			var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-			UserId = jwtTokenHandlerService.GetUserIdFromToken(token);
-
 		}
 
 		[HttpGet("getFavorites")]
 		public async Task<IActionResult> GetFavorites()
 		{
-			var result = await searchEngineService.GetFavorites(UserId);
+            var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            UserId = jwtTokenHandlerService.GetUserIdFromToken(token);
+
+
+            var result = await searchEngineService.GetFavorites(UserId);
 
 			if (!result.IsSuccess)
 			{
@@ -43,7 +43,11 @@ namespace SearchUniversityAPI.Controllers
 		[HttpGet("addFavorite")]
 		public async Task<IActionResult> AddFavorite(int facultyId)
 		{
-		   await searchEngineService.AddFavorite(UserId, facultyId); // is favorite to true
+            var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
+            UserId = jwtTokenHandlerService.GetUserIdFromToken(token);
+
+
+            await searchEngineService.AddFavorite(UserId, facultyId); // is favorite to true
 
 			//var result = await searchEngineService.GetFavorites(UserId);
 
@@ -59,6 +63,8 @@ namespace SearchUniversityAPI.Controllers
 		[HttpDelete("removeFavorite")]
 		public async Task<IActionResult> RemoveFavorite(int facultyId)
 		{
+
+
 			await searchEngineService.RemoveFavorite(facultyId);
 
 			////var result = await searchEngineService.GetFavorites(UserId);

@@ -25,13 +25,13 @@ namespace BusinessLayer.Mapping
 
 			CreateMap<UniversityResponseDB, UniversityResponse>()
 				.ForMember(dest => dest.UniversityId, opt => opt.MapFrom(src => src.Id))
-				.ForMember(dest => dest.UniversityName, opt => opt.MapFrom(src => src.Name))
-				.ForMember(dest => dest.UniversityLogo, opt => opt.MapFrom(src => src.LogoUrl));
+				.ForMember(dest => dest.UniversityName, opt => opt.MapFrom(src => src.Name));
+				//.ForMember(dest => dest.UniversityLogo, opt => opt.MapFrom(src => src.LogoUrl));
 
 			CreateMap<FacultyResponseDB, FacultyResponse>()
-				.ForMember(dest => dest.FacultyId, opt => opt.MapFrom(src => src.FacultyId))
-				.ForMember(dest => dest.FacultyDescription, opt => opt.MapFrom(src => src.FacultyDescription))
-				.ForMember(dest => dest.FacultyName, opt => opt.MapFrom(src => src.FacultyName))
+				.ForMember(dest => dest.FacultyId, opt => opt.MapFrom(src => src.Id))
+				.ForMember(dest => dest.FacultyDescription, opt => opt.MapFrom(src => src.Description))
+				.ForMember(dest => dest.FacultyName, opt => opt.MapFrom(src => src.Name))
 				.ForMember(dest => dest.FreeSpots, opt => opt.MapFrom(src => src.FreeSpots))
 				.ForMember(dest => dest.PaidSpots, opt => opt.MapFrom(src => src.PaidSpots))
 				.ForMember(dest => dest.TuitionFee, opt => opt.MapFrom(src => src.TuitionFee))

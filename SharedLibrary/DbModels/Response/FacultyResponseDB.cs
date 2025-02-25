@@ -3,10 +3,10 @@
 	public class FacultyResponseDB
 	{
 		public int UniversityId { get; set; }
-		public int FacultyId { get; set; }
+		public int Id { get; set; }
 
-		public string FacultyName { get; set; }
-		public string FacultyDescription { get; set; }
+		public string Name { get; set; }
+		public string Description { get; set; }
 
 		public int FreeSpots { get; set; } // anvcari texer
 		public int PaidSpots { get; set; }//  vcaropvii texer

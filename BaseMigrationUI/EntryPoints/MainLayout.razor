@@ -50,15 +50,3 @@
 	</div>
 
 </MudLayout>
-
-@code {
-
-	protected override void OnAfterRender(bool firstRender)
-	{
-		if (firstRender)
-		{
-			Navigation.NavigateTo(Route.Registration);
-
-		}
-    }
-}

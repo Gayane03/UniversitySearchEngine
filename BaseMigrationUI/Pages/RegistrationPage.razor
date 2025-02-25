@@ -158,7 +158,7 @@ else
 					};
 
 				var response = await apiController!.RegisterUser(registrationRequest);
-				emailVerificationTokenResponse = await responseMessageUtile.HandleResponse<EmailVerificationTokenResponse>(response);
+				emailVerificationTokenResponse = await responseMessageUtile!.HandleResponse<EmailVerificationTokenResponse>(response);
 
 				string? token = emailVerificationTokenResponse?.VerificationToken;
 				if (string.IsNullOrEmpty(token))

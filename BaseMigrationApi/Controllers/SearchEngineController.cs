@@ -15,17 +15,15 @@ namespace SearchUniversityAPI.Controllers
 	{
 		private readonly ISearchEngineService searchEngineService;
 
-        public SearchEngineController(
-			ISearchEngineService searchEngineService,
-			IJwtTokenHandlerService jwtTokenHandlerService)
+        public SearchEngineController(ISearchEngineService searchEngineService)
         {
 			this.searchEngineService = searchEngineService;
-		}
+        }
 
         [HttpPost("getUniversitiesWithFilter")]
 		public async Task<IActionResult> GetUniversitiesWithFilter([FromBody]UniversitiesSearchingRequest universitiesSearchingRequest)
 		{
-			var result = await searchEngineService.GetUniversities(universitiesSearchingRequest);
+            var result = await searchEngineService.GetUniversities(universitiesSearchingRequest);
 
 			if(!result.IsSuccess)
 			{

@@ -29,7 +29,7 @@ namespace RepositoryLayer.Helper
 				{
 					Id = reader.GetInt32(reader.GetOrdinal("Id")),
 					Name = reader.GetString(reader.GetOrdinal("Name")),
-					LogoUrl = reader.GetString(reader.GetOrdinal("LogoUrl")),
+					//LogoUrl = reader.GetString(reader.GetOrdinal("LogoUrl")),
 					CityId = reader.GetInt32(reader.GetOrdinal("CityId")),
 				};
 
@@ -58,10 +58,10 @@ namespace RepositoryLayer.Helper
 		{
 			var faculty = new FacultyResponseDB
 			{
-				FacultyId = reader.GetInt32(reader.GetOrdinal("Id")),
+				Id = reader.GetInt32(reader.GetOrdinal("Id")),
 				UniversityId = reader.GetInt32(reader.GetOrdinal("UniversityId")),
-				FacultyName = reader.GetString(reader.GetOrdinal("Name")),
-				FacultyDescription = reader.GetString(reader.GetOrdinal("Description")),
+				Name = reader.GetString(reader.GetOrdinal("Name")),
+				Description = reader.GetString(reader.GetOrdinal("Description")),
 				FreeSpots = reader.GetInt32(reader.GetOrdinal("FreeSpots")),
 				PaidSpots = reader.GetInt32(reader.GetOrdinal("PaidSpots")),
 				TuitionFee = reader.GetInt32(reader.GetOrdinal("TuitionFee")),

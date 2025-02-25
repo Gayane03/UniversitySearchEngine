@@ -8,9 +8,21 @@ namespace RepositoryLayer
 	{
 		public SearchEngineRepository(IConfiguration configuration) : base(configuration) { }
 
-		public async Task<List<ExamResponseDB>> GetExams()
+		public async Task<List<ExamResponseDB>> GetExams(int? facultyId)
 		{
-			var getExams = await GetAll<Exam, ExamResponseDB>(ResponseModelGenerator.GetExams);
+            Dictionary<string, object>? parameters = null;
+            string? whereConditionBody = null;
+
+            if (facultyId is not null)
+            {
+                parameters = new Dictionary<string, object>();
+                parameters.Add($"facultyId", facultyId);
+
+                whereConditionBody = $"{nameof(FacultyResponseDB.Id)} = @facultyId";
+            }
+
+
+            var getExams = await GetAll<Exam, ExamResponseDB>(ResponseModelGenerator.GetExams, parameters, whereConditionBody);
 			return getExams;
 		}
 
@@ -43,7 +55,7 @@ namespace RepositoryLayer
 			var parameters = new Dictionary<string, object>();
 			parameters.Add($"facultyId", facultyId);
 
-			var whereConditionBody = $"{nameof(FacultyResponseDB.FacultyId)} = @facultyId";
+			var whereConditionBody = $"{nameof(FacultyResponseDB.Id)} = @facultyId";
 			var faculty = await Get<Faculty, FacultyResponseDB>(ResponseModelGenerator.GetFaculty, parameters, whereConditionBody);
 
 			return faculty;

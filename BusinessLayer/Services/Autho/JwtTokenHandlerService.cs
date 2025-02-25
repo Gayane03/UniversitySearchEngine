@@ -92,19 +92,21 @@ namespace BusinessLayer.Autho
 			};
 		}
 
-		public int GetUserIdFromToken(string token)
-		{
-			var tokenHandler = new JwtSecurityTokenHandler();
-			try
-			{
-				var principal = tokenHandler.ValidateToken(token, GetTokenValidationParameters(), out SecurityToken validatedToken);
-				var userId = Convert.ToInt32 (principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub).Value);
-				return userId;
-			}
-			catch (Exception)
-			{
-				return 0; // Return null if token is invalid or expired
-			}
-		}
-	}
+        public int GetUserIdFromToken(string token)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            try
+            {
+                var principal = tokenHandler.ValidateToken(token, GetTokenValidationParameters(), out SecurityToken validatedToken);
+
+                var userId = Convert.ToInt32(principal.Claims.FirstOrDefault(c => c.Type == JwtRegisteredClaimNames.Sub ||
+                                                                                  c.Type == ClaimTypes.NameIdentifier).Value);
+                return userId;
+            }
+            catch (Exception)
+            {
+                return 0; // Return null if token is invalid or expired
+            }
+        }
+    }
 }
