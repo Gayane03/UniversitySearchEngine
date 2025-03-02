@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using System.Security.Claims;
 
-namespace BaseMigrationApi.Extentions
+namespace BaseMigrationApi.Extensions
 {
 	public static class JwtBearerEventsExtension
 	{

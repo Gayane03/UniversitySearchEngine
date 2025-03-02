@@ -68,5 +68,14 @@ namespace RepositoryLayer
 			return await Delete<User>(parameters, whereConditionBody);
 
 		}
+		public async Task<int> GetUserRoleId(int userId)
+		{
+			var parameters = new Dictionary<string, object>();
+			parameters.Add($"Id", userId);
+
+			var whereConditionBody = $" Id = @Id";
+			var roleResponse = await Get<User, RoleResponse>(ResponseModelGenerator.GenerateRoleResponse, parameters, whereConditionBody);
+			return roleResponse!.RoleId;
+		}
 	}
 }

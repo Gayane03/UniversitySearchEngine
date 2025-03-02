@@ -3,7 +3,7 @@ using BusinessLayer.Autho;
 using BusinessLayer.Helper;
 using Microsoft.AspNetCore.Authentication;
 
-namespace BaseMigrationApi.Extentions
+namespace BaseMigrationApi.Extensions
 {
 	public static class WebAppBuilderExtension
 	{
@@ -45,6 +45,5 @@ namespace BaseMigrationApi.Extentions
 
 			return authenticationBuilder;
 		}
-
 	}
 }

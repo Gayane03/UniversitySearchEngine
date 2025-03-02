@@ -25,6 +25,10 @@ namespace RepositoryLayer.Helper
 			};
 		}
 
+		public static RoleResponse GenerateRoleResponse(SqlDataReader reader)
+		{
+			return new() { RoleId = reader.GetInt32(reader.GetOrdinal("RoleId")) };
+		}
 		public static List<UniversityResponseDB> GetUniversities(SqlDataReader reader)
 		{
 			var universities = new List<UniversityResponseDB>();

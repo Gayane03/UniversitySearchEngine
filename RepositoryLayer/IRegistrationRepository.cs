@@ -13,5 +13,6 @@ namespace RepositoryLayer
 		public Task<LoginResponseDB> GetLoginProcessResponse(LoginRequestDB loginRequest);
 
 		public Task<bool> DeleteUserWithId(int userId);
+		public Task<int> GetUserRoleId(int userId);
 	}
 }

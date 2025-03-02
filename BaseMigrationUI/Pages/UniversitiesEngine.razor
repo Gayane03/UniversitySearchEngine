@@ -156,6 +156,12 @@
 	}
 </MudContainer>
 
+<MudGrid Justify="Justify.FlexEnd">
+	<MudItem Class="my-4" Style="text-align: right;">
+		<MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="Logout">LOGOUT</MudButton>
+	</MudItem>
+</MudGrid>
+
 @code {
 	private UniversitiesSearchingRequest searchRequest = new() { UniversityFilter = new() };
 	private List<UniversityResponse> universityList = new();
@@ -190,6 +196,15 @@
 		{
 			await GetFacultyInformation();
 		}
+	}
+
+
+	private async Task Logout()
+	{
+		await localStorageHelper.RemoveToken(TokenStorageName.EmailVerification);
+		await localStorageHelper.RemoveToken(TokenStorageName.UserAccess);
+
+		navigationManager.NavigateTo(Route.Registration);
 	}
 
 
@@ -281,5 +296,4 @@
 			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
 		}
 	}
-}
 }

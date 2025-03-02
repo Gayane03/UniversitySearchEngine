@@ -1,5 +1,5 @@
 ﻿using BaseMigrationApi.DependencyInjection;
-using BaseMigrationApi.Extentions;
+using BaseMigrationApi.Extensions;
 using BusinessLayer.Helper;
 using BusinessLayer.Mapping;
 using Microsoft.AspNetCore.Identity;
@@ -12,11 +12,11 @@ namespace BaseMigrationApi.Helper
 		{
 			builder.Services.AddControllers();
 
-			builder.Services.AddConnectionFront();// ui jamanak
-	
+			builder.Services.AddConnectionFront();//fronti jamank *******
+
 			// Add services to the container.
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-			//builder.Services.AddEndpointsApiExplorer(); // ogtagorcel erb swaggerov enq test anum
+			//builder.Services.AddEndpointsApiExplorer(); // ogtagorcel erb swaggerov enq test anum******
 
 
 			builder.Services.AddDependencies();
@@ -35,7 +35,7 @@ namespace BaseMigrationApi.Helper
 			builder.AddLocalAuthentications();
 			builder.AddLocalAuthorizations();
 
-			//builder.Services.AddSwagger();//test swaggeri jamank
+			//builder.Services.AddSwagger();//test swaggeri jamank******
 
 
 			return builder.Build();
@@ -45,6 +45,8 @@ namespace BaseMigrationApi.Helper
 		{
 			if (app.Environment.IsDevelopment())
 			{
+				////swaggeri jamanak****
+
 				//app.UseSwagger();
 				//app.UseSwaggerUI(c =>
 				//{
@@ -53,7 +55,7 @@ namespace BaseMigrationApi.Helper
 			}
 
 
-			app.UseCors("AllowBlazorClient");//blazori jamanak
+			app.UseCors("AllowBlazorClient"); //blazori jamanak****
 
 			app.UseHttpsRedirection();
 
@@ -62,7 +64,7 @@ namespace BaseMigrationApi.Helper
 
 			app.UseAuthentication();
 			app.UseAuthorization();
-			
+
 			app.MapControllers();
 			app.Run();
 		}
