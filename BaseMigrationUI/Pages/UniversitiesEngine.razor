@@ -7,6 +7,7 @@
 @inject ApiController apiController;
 @inject ResponseMessageUtile responseMessageUtile;
 @inject LocalStorageHelper localStorageHelper;
+@inject ISnackbar Snackbar;
 
 <MudContainer>
 	@if (!isSelectedFaculty)
@@ -171,6 +172,7 @@
 	{
 		// isSelectedFaculty = false;
 		var token = await GetAccessToken();
+		Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 		var firstSelectedProcess = new UniversitiesSearchingRequest() { Page = 1, PerPage = 10 };
 
 		var response = await apiController.GetUniversitiesWithFilter(token, firstSelectedProcess);
@@ -199,11 +201,16 @@
 			var response = await apiController.GetUniversitiesWithFilter(token, searchRequest);
 			universityList = await responseMessageUtile.HandleResponse<List<UniversityResponse>>(response);
 		}
+		catch (SystemException ex)
+		{
+			Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+		}
 		catch (Exception ex)
 		{
-			navigationManager.NavigateTo(Route.NotFound);
+			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
 		}
 	}
+
 
 	private async Task<string> GetAccessToken()
 	{
@@ -211,10 +218,15 @@
 		{
 			return await localStorageHelper.GetToken(TokenStorageName.UserAccess);
 		}
+		catch (SystemException ex)
+		{
+			Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+		}
 		catch (Exception ex)
 		{
-			navigationManager.NavigateTo(Route.NotFound);
+			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
 		}
+
 
 		return null;
 	}
@@ -260,9 +272,14 @@
 			var response = await apiController.GetFacultiesWithFilter(token, facultyRequest);
 			facultyList = await responseMessageUtile.HandleResponse<List<FacultyResponse>>(response);
 		}
+		catch (SystemException ex)
+		{
+			Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+		}
 		catch (Exception ex)
 		{
-			navigationManager.NavigateTo(Route.NotFound);
+			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
 		}
 	}
+}
 }
