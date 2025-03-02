@@ -50,6 +50,12 @@ namespace SearchUniversityUI
 			string url = $"SearchEngine/getFaculty/{facultyId}";
 			return await httpClient.GetAsync(url);
 		}
+		public async Task<HttpResponseMessage?> ValidateToken(string token)
+		{
+			httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+			return await httpClient.GetAsync("SearchEngine/validateToken");
+		}
+
 
 
 		//favorite controller

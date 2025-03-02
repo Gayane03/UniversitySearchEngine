@@ -2,6 +2,7 @@
 using BaseMigrationApi.Extentions;
 using BusinessLayer.Helper;
 using BusinessLayer.Mapping;
+using Microsoft.AspNetCore.Identity;
 
 namespace BaseMigrationApi.Helper
 {
@@ -11,14 +12,21 @@ namespace BaseMigrationApi.Helper
 		{
 			builder.Services.AddControllers();
 
-			//builder.Services.AddConnectionFront();// ui jamanak
+			builder.Services.AddConnectionFront();// ui jamanak
 	
 			// Add services to the container.
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-			builder.Services.AddEndpointsApiExplorer(); // ogtagorcel erb swaggerov enq test anum
+			//builder.Services.AddEndpointsApiExplorer(); // ogtagorcel erb swaggerov enq test anum
 
 
 			builder.Services.AddDependencies();
+
+			builder.Services.Configure<PasswordHasherOptions>(options =>
+			{
+				options.IterationCount = 12000; // Increase iterations
+												//options.HashAlgorithm = PasswordHashAlgorithm.SHA256; //example
+												//options.MemoryReductionFactor = true; //for pbkdf2, can reduce memory consumption.
+			});
 
 			builder.Services.AddAutoMapper(typeof(MappingProfile).Assembly);
 
@@ -27,7 +35,7 @@ namespace BaseMigrationApi.Helper
 			builder.AddLocalAuthentications();
 			builder.AddLocalAuthorizations();
 
-			builder.Services.AddSwagger();//test swaggeri jamank
+			//builder.Services.AddSwagger();//test swaggeri jamank
 
 
 			return builder.Build();
@@ -37,15 +45,15 @@ namespace BaseMigrationApi.Helper
 		{
 			if (app.Environment.IsDevelopment())
 			{
-				app.UseSwagger();
-				app.UseSwaggerUI(c =>
-				{
-					c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API v1");
-				});
+				//app.UseSwagger();
+				//app.UseSwaggerUI(c =>
+				//{
+				//	c.SwaggerEndpoint("/swagger/v1/swagger.json", "Your API v1");
+				//});
 			}
 
 
-			//app.UseCors("AllowBlazorClient");//blazori jamanak
+			app.UseCors("AllowBlazorClient");//blazori jamanak
 
 			app.UseHttpsRedirection();
 

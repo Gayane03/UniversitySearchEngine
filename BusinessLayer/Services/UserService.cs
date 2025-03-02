@@ -112,6 +112,15 @@ namespace BusinessLayer.Services
 					return Result<LoginResponse>.Failure(Message.LoginFailError);
 				}
 
+				var isVerifyPassword = PasswordHelper.VerifyPassword(loginUserModel.PasswordHash, mapRequest.PasswordHash);
+				if (!isVerifyPassword)
+				{
+					return Result<LoginResponse>.Failure(Message.LoginFailError);
+				}
+
+				var roleId = loginUserModel.RoleId;
+				var roleName = ((RoleType)roleId).ToStringRole();
+
 				var accessToken = jwtTokenHandlerService.GenerateJwtToken(loginUserModel.Id.ToString(), Role.Admin);
 
 				return Result<LoginResponse>.Success(new(accessToken));

@@ -42,13 +42,13 @@
 						  @bind-Value="registrationModel.Password"
 						  Label="Password"
 						  For="@(() => registrationModel.Password)"
-						  Immediate="true" />
+						  Immediate="true" InputType="InputType.Password" />
 
 			<MudTextField T="string"
 						  @bind-Value="registrationModel.RepeatPassword"
 						  Label="RepeatPassword"
 						  For="@(() => registrationModel.RepeatPassword)"
-						  Immediate="true" />
+						  Immediate="true" InputType="InputType.Password" />
 			
 
 			<MudCardActions Class="pl-0">
@@ -92,7 +92,7 @@ else
 							  @bind-Value="loginRequest.Password"
 							  Label="Password"
 							  For="@(() => loginRequest.Password)"
-							  Immediate="true" />
+							  Immediate="true" InputType="InputType.Password" />
 			</MudItem>
 
 			<MudCardActions Class="pl-0">
@@ -138,6 +138,26 @@ else
 	protected override async Task OnInitializedAsync()
 	{
 		await base.OnInitializedAsync();
+
+		var accessToken = await localStorageHelper.GetToken(TokenStorageName.UserAccess);
+
+		if (!string.IsNullOrEmpty(accessToken))
+		{
+			try
+			{
+				var response = await apiController.ValidateToken(accessToken);
+				var isValid = await responseMessageUtile.HandleResponse<bool>(response);
+
+				if (isValid)
+				{
+					navigationManager.NavigateTo(Route.Universities);
+				}
+			}
+			catch (Exception)
+			{
+				navigationManager.NavigateTo(Route.Registration);
+			}
+		}
 	}
 	
 
@@ -198,7 +218,7 @@ else
 				await localStorageHelper!.RemoveToken(TokenStorageName.EmailVerification);
 				await localStorageHelper.SaveToken(TokenStorageName.UserAccess, token);
 
-				navigationManager!.NavigateTo(Route.BaseMigration);
+				navigationManager!.NavigateTo(Route.Universities);
 			}
 		}
 		catch (Exception ex)

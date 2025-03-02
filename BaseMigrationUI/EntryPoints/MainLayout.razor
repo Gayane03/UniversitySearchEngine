@@ -1,52 +1,93 @@
 ﻿@inherits LayoutComponentBase
 @inject NavigationManager Navigation
 
-<style>
-	.header {
-		margin-top: 30px !important;
-		display: flex !important;
-		justify-content: center !important;
-		align-items: center !important;
-		height: 20vh !important;
-		color: #305a77 !important;
-		background-color: #d2d2dc !important;
-	}
-
-	.footer {
-		display: flex !important;
-		justify-content: center !important;
-		align-items: center !important;
-		height: 4vh;
-		color: #305a77 !important;
-		background-color: #d2d2dc !important;
-	}
-
-</style>
-
 <MudLayout>
-	<header>
-		<div class="header">
-			<h1>
-				University Search Engine
-			</h1>
-		</div>
-	</header>
+    <header>
+        <div class="header">
+            <MudIconButton Icon="@Icons.Material.Filled.AccountBox" Color="Color.Primary" Size="Size.Large" />
+            <h1>Education Account</h1>
+            <MudIconButton Icon="@Icons.Material.Filled.Info" Color="Color.Primary" Size="Size.Large" />
+        </div>
+    </header>
 
-	<div class="row">
-		<div class="d-flex justify-content-center" style="margin-top: 24px !important">
-			<MudCard Elevation="2">
-					@Body <!-- This is where the page content will be rendered -->	
-			</MudCard>
-		</div>
-	</div>
+    <div class="content">
+        <div class="d-flex justify-content-center" style="margin-top: 24px;">
+            <MudCard Elevation="4" Class="card-container">
+                @Body <!-- This is where the page content will be rendered -->
+            </MudCard>
+        </div>
+    </div>
 
-
-	<div class="row" style="padding-top: 16px !important">
-		<div class="footer">
-			<footer>
-				<p style="margin: 0">@DateTime.Now.Year</p>
-			</footer>
-		</div>
-	</div>
-
+    <div class="footer">
+        <footer>
+            <p style="margin: 0">@DateTime.Now.Year - Education Account</p>
+        </footer>
+    </div>
 </MudLayout>
+
+<style>
+    /* Color scheme */
+    :root {
+        --primary-color: #006d77; /* Deep teal for primary elements */
+        --secondary-color: #83c5be; /* Light mint green for accents */
+        --accent-color: #f4a261; /* Soft orange for highlights */
+        --background-color: #edf6f9; /* Light grayish blue background */
+        --footer-color: #006d77; /* Deep teal for footer */
+    }
+
+    /* Header styling */
+    .header {
+        margin-top: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 20vh;
+        color: white;
+        background-color: var(--primary-color);
+        text-align: center;
+    }
+
+        .header h1 {
+            font-size: 2rem;
+            margin-left: 15px;
+            margin-right: 15px;
+        }
+
+        .header .MuiIconButton-root {
+            margin: 0 15px;
+        }
+
+    /* Content card styling */
+    .card-container {
+        max-width: 900px;
+        width: 100%;
+        padding: 16px;
+        background-color: white;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+    }
+
+    /* Footer styling */
+    .footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 6vh;
+        background-color: var(--footer-color);
+        color: white;
+        font-size: 0.9rem;
+    }
+
+        .footer footer {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+        }
+
+    /* Content section */
+    .content {
+        padding: 24px;
+        background-color: var(--background-color);
+    }
+</style>

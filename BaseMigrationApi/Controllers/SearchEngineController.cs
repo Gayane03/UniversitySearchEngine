@@ -14,13 +14,23 @@ namespace SearchUniversityAPI.Controllers
 	public class SearchEngineController:ControllerBase
 	{
 		private readonly ISearchEngineService searchEngineService;
-
-        public SearchEngineController(ISearchEngineService searchEngineService)
+		private readonly IJwtTokenHandlerService jwtTokenHandlerService;	
+        public SearchEngineController(
+			ISearchEngineService searchEngineService,
+			IJwtTokenHandlerService jwtTokenHandlerService)
         {
 			this.searchEngineService = searchEngineService;
+			this.jwtTokenHandlerService = jwtTokenHandlerService;	
         }
 
-        [HttpPost("getUniversitiesWithFilter")]
+		[HttpGet("validateToken")]
+		public async Task<IActionResult> ValidateToken()
+		{
+			return Ok(true);
+		}
+
+
+		[HttpPost("getUniversitiesWithFilter")]
 		public async Task<IActionResult> GetUniversitiesWithFilter([FromBody]UniversitiesSearchingRequest universitiesSearchingRequest)
 		{
             var result = await searchEngineService.GetUniversities(universitiesSearchingRequest);

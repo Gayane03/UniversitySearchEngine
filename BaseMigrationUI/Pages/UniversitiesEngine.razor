@@ -1,0 +1,268 @@
+﻿@attribute [Route(Route.Universities)]
+@using MudBlazor
+@using SharedLibrary.Enum
+@using SharedLibrary.RequestModels.CoreRequests
+@using SharedLibrary.ResponseModels.CoreResponse
+@inject NavigationManager navigationManager;
+@inject ApiController apiController;
+@inject ResponseMessageUtile responseMessageUtile;
+@inject LocalStorageHelper localStorageHelper;
+
+<MudContainer>
+	@if (!isSelectedFaculty)
+	{
+		@if (selectedUniversity is null)
+		{
+			<MudCard Class="my-2">
+				<MudCardContent>
+					<MudGrid>
+						<MudItem xs="12" md="6">
+							<MudTextField Label="University Name" @bind-Value="searchRequest.UniversityFilter.QueryUniversityName" />
+						</MudItem>
+						@if (Enum.GetValues(typeof(City)).Cast<City>().Any())
+						{
+							<MudItem xs="12" md="6">
+								<MudSelect T="City?" @bind-Value="searchRequest.UniversityFilter.City" Label="City" Variant="Variant.Outlined">
+									@foreach (var city in Enum.GetValues(typeof(City)).Cast<City>())
+									{
+										<MudSelectItem Value="(City?)city">@city.ToString()</MudSelectItem>
+									}
+								</MudSelect>
+							</MudItem>
+
+						}
+						@*  <MudItem xs="12" md="6">
+				<MudTextField Label="Page" @bind-Value="searchRequest.Page" />
+				</MudItem>
+				<MudItem xs="12" md="6">
+				<MudTextField Label="Per Page" @bind-Value="searchRequest.PerPage" />
+				</MudItem>    *@
+					</MudGrid>
+				</MudCardContent>
+			</MudCard>
+
+			@if (universityList is not null && universityList.Any())
+			{
+				<MudTable Items="@universityList" Dense="true" T="UniversityResponse" @bind-SelectedItem="selectedUniversity" Class="mb-2">
+					<HeaderContent>
+						@* <MudTh>Number</MudTh> *@
+						<MudTh>Name</MudTh>
+					</HeaderContent>
+					<RowTemplate>
+						@* <MudTd DataLabel="Number">@context.UniversityId</MudTd> *@
+						<MudTd DataLabel="Name">@context.UniversityName</MudTd>
+					</RowTemplate>
+					<PagerContent>
+						<MudTablePager />
+					</PagerContent>
+				</MudTable>
+			}
+
+			<MudItem xs="12" Class="mb-2">
+				<MudButton OnClick="SearchUniversities" Variant="Variant.Filled" Color="Color.Primary">Search</MudButton>
+			</MudItem>
+		}
+		else if (!isSelectedFaculty)
+		{
+			<MudCard>
+				<MudCardContent>
+					<MudGrid>
+						<MudItem xs="12">
+							<MudText Typo="Typo.h5">@selectedUniversity.UniversityName</MudText>
+						</MudItem>
+					</MudGrid>
+				</MudCardContent>
+			</MudCard>
+
+			if (facultyRequest is not null)
+			{
+				<MudCardContent Class="my-2">
+					<MudGrid>
+						<MudItem xs="12" md="6">
+							<MudTextField Label="Faculty Name" @bind-Value="facultyRequest.FacultyFilter.QueryFacultyName" />
+						</MudItem>
+
+						<MudItem xs="12" md="6">
+							<MudNumericField T="double?" Label="Minimum Score for Free Training" @bind-Value="facultyRequest.FacultyFilter.MinimumScoreForFreeTraining" />
+						</MudItem>
+
+						<MudItem xs="12" md="6">
+							<MudNumericField T="int?" Label="Max Tuition Fee" @bind-Value="facultyRequest.FacultyFilter.MaxTuitionFee" />
+						</MudItem>
+						@*
+			<MudItem xs="12" md="6">
+			<MudSelect T="List<string>" @bind-Value="facultyRequest.FacultyFilter.EntranceExams" Label="Entrance Exams" Variant="Variant.Outlined" MultiSelection="true">
+			@foreach (var exam in entranceExamOptions)
+			{
+			<MudSelectItem Value="exam">@exam</MudSelectItem>
+			}
+			</MudSelect>
+			</MudItem> *@
+					</MudGrid>
+				</MudCardContent>
+			}
+			@if (facultyList is not null && facultyList.Any())
+			{
+				<MudTable Items="@facultyList" Dense="true" T="FacultyResponse" @bind-SelectedItem="selectedFaculty" Class="mb-2">
+					<HeaderContent>
+						<MudTh>Faculty Name</MudTh>
+						<MudTh>Description</MudTh>
+						<MudTh>Free Spots</MudTh>
+						<MudTh>Paid Spots</MudTh>
+						<MudTh>Tuition Fee</MudTh>
+					</HeaderContent>
+					<RowTemplate>
+						<MudTd DataLabel="Faculty Name">@context.FacultyName</MudTd>
+						<MudTd DataLabel="Description">@context.FacultyDescription</MudTd>
+						<MudTd DataLabel="Free Spots">@context.FreeSpots</MudTd>
+						<MudTd DataLabel="Paid Spots">@context.PaidSpots</MudTd>
+						<MudTd DataLabel="Tuition Fee">@context.TuitionFee</MudTd>
+					</RowTemplate>
+					<PagerContent>
+						<MudTablePager />
+					</PagerContent>
+				</MudTable>
+			}
+
+			<MudItem xs="12" Class="my-2">
+				<MudButton OnClick="SearchFaculties" Variant="Variant.Filled" Color="Color.Primary">Load Faculties</MudButton>
+			</MudItem>
+		}
+	}
+	else
+	{
+		<MudCard Class="mt-4">
+			<MudCardContent>
+				<MudGrid>
+					<MudItem xs="12">
+						<MudText Typo="Typo.h5">@selectedFaculty.FacultyName</MudText>
+					</MudItem>
+					<MudItem xs="12">
+						<MudText Typo="Typo.subtitle1">Description: @selectedFaculty.FacultyDescription</MudText>
+					</MudItem>
+					<MudItem xs="6">
+						<MudText Typo="Typo.body1">Free Spots: @selectedFaculty.FreeSpots</MudText>
+					</MudItem>
+					<MudItem xs="6">
+						<MudText Typo="Typo.body1">Paid Spots: @selectedFaculty.PaidSpots</MudText>
+					</MudItem>
+					<MudItem xs="12">
+						<MudText Typo="Typo.body1">Tuition Fee: @selectedFaculty.TuitionFee</MudText>
+					</MudItem>
+				</MudGrid>
+			</MudCardContent>
+		</MudCard>
+	}
+</MudContainer>
+
+@code {
+	private UniversitiesSearchingRequest searchRequest = new() { UniversityFilter = new() };
+	private List<UniversityResponse> universityList = new();
+
+	private UniversityResponse? selectedUniversity;
+	private FacultyResponse? selectedFaculty;
+
+	private FacultiesSearchingRequest facultyRequest = new() { FacultyFilter = new() };
+	private List<FacultyResponse> facultyList = new();
+
+	private bool isSelectedFaculty = false;
+
+	protected override async Task OnInitializedAsync()
+	{
+		// isSelectedFaculty = false;
+		var token = await GetAccessToken();
+		var firstSelectedProcess = new UniversitiesSearchingRequest() { Page = 1, PerPage = 10 };
+
+		var response = await apiController.GetUniversitiesWithFilter(token, firstSelectedProcess);
+
+		universityList = await responseMessageUtile.HandleResponse<List<UniversityResponse>>(response);
+	}
+
+	protected override async Task OnAfterRenderAsync(bool first)
+	{
+		if (!first && !isSelectedFaculty)
+		{
+			await SearchFaculties();
+		}
+		else if (!first && isSelectedFaculty)
+		{
+			await GetFacultyInformation();
+		}
+	}
+
+
+	private async Task SearchUniversities()
+	{
+		try
+		{
+			var token = await GetAccessToken();
+			var response = await apiController.GetUniversitiesWithFilter(token, searchRequest);
+			universityList = await responseMessageUtile.HandleResponse<List<UniversityResponse>>(response);
+		}
+		catch (Exception ex)
+		{
+			navigationManager.NavigateTo(Route.NotFound);
+		}
+	}
+
+	private async Task<string> GetAccessToken()
+	{
+		try
+		{
+			return await localStorageHelper.GetToken(TokenStorageName.UserAccess);
+		}
+		catch (Exception ex)
+		{
+			navigationManager.NavigateTo(Route.NotFound);
+		}
+
+		return null;
+	}
+
+
+	private async Task SelectUniversity(TableRowClickEventArgs<UniversityResponse> args)
+	{
+		selectedUniversity = args.Item;
+		facultyRequest.UniversityId = selectedUniversity.UniversityId;
+
+		await SearchFaculties();
+		await base.OnAfterRenderAsync(false);
+	}
+
+	private async Task SelectFaculty(TableRowClickEventArgs<FacultyResponse> args)
+	{
+		selectedFaculty = args.Item;
+		isSelectedFaculty = true;  // Set before fetching info
+
+		await GetFacultyInformation();
+		StateHasChanged(); // Ensure UI updates immediately
+	}
+
+
+	private async Task GetFacultyInformation()
+	{
+		var token = await GetAccessToken();
+
+		var response = await apiController.GetFaculty(token, selectedFaculty.FacultyId);
+		selectedFaculty = await responseMessageUtile.HandleResponse<FacultyResponse>(response);
+
+		isSelectedFaculty = true;
+		StateHasChanged(); // Force UI refresh
+	}
+
+
+	private async Task SearchFaculties()
+	{
+		try
+		{
+			var token = await GetAccessToken();
+
+			var response = await apiController.GetFacultiesWithFilter(token, facultyRequest);
+			facultyList = await responseMessageUtile.HandleResponse<List<FacultyResponse>>(response);
+		}
+		catch (Exception ex)
+		{
+			navigationManager.NavigateTo(Route.NotFound);
+		}
+	}
+}
