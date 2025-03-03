@@ -35,7 +35,7 @@ namespace BusinessLayer.Services.CoreServices
 					if(!string.IsNullOrEmpty(query) && query != "string")
 					{
 						universities =  universities
-							.Where(u => u.Name.Contains(query, StringComparison.OrdinalIgnoreCase) 
+							.Where(u => u.Name.ToLower().Contains(query.ToLower(), StringComparison.OrdinalIgnoreCase) 
 							          || FilterHelper.IsAbbreviationMatch(u.Name,query))
 							.ToList();
 					}
@@ -100,17 +100,6 @@ namespace BusinessLayer.Services.CoreServices
 					}
 				}
 
-
-
-    //            foreach (var exam in exams)
-				//{
-				//	var faculty = facultiesResponse.FirstOrDefault(f => f.FacultyId == exam.FacultyId);
-				//	if (faculty != null)
-				//	{
-				//		faculty.EntranceExam.Add(exam.Name);
-				//	}
-				//}
-
 				var filterFaculty = facultiesSearchingRequest.FacultyFilter;
 
 				if (filterFaculty is not null)
@@ -131,7 +120,7 @@ namespace BusinessLayer.Services.CoreServices
 					if (minimumScoreForFreeTraining is not null && minimumScoreForFreeTraining != default(double))
 					{
 						facultiesResponse = facultiesResponse
-							.Where(u => u.LastYearMinScoreForFreeTrain == minimumScoreForFreeTraining)
+							.Where(u => u.LastYearMinScoreForFreeTrain <= minimumScoreForFreeTraining)
 							.ToList();
 					}
 
@@ -142,11 +131,21 @@ namespace BusinessLayer.Services.CoreServices
 							.ToList();
 					}
 
-					if(entranceExams is not null && entranceExams.Any() && !entranceExams.Any(e => e == "string" || string.IsNullOrEmpty(e)))
+					if(entranceExams is not null && entranceExams.Any())
 					{
-						facultiesResponse = facultiesResponse
-							.Where(faculty => entranceExams.Any(exam => faculty.EntranceExam.Contains(exam)))
+						entranceExams = entranceExams.Where(e => !string.IsNullOrEmpty(e)).ToList();
+
+						if(entranceExams is not null && entranceExams.Any())
+						{
+							foreach (var faculty in facultiesResponse)
+							{
+								faculty.EntranceExam = faculty.EntranceExam.Select(e => e.ToLower()).ToList();
+							}
+
+							facultiesResponse = facultiesResponse
+							.Where(faculty => entranceExams.Any(exam => faculty.EntranceExam.Contains(exam.ToLower())))
 							.ToList();
+						}
 					
 					}
 				}

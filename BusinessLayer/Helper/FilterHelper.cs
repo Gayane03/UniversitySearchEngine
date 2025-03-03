@@ -7,15 +7,20 @@ namespace BusinessLayer.Helper
 	{
 		public static bool IsAbbreviationMatch(string fullName, string abbreviation)
 		{
-			int index = 0;
-			foreach (char ch in fullName.ToLower()) // Convert to lowercase for case-insensitivity
+			fullName =  fullName.ToLower();
+			abbreviation = abbreviation.ToLower();
+
+			var splitFullName =  fullName.Split(' ');
+
+			var newAbbreviation = "";
+
+			var firstLetters = splitFullName.Select(x => x[0]).ToArray();
+			foreach (var item in firstLetters)
 			{
-				if (index < abbreviation.Length && ch == abbreviation[index])
-				{
-					index++;
-				}
+				newAbbreviation += item;
 			}
-			return index == abbreviation.Length;
+
+			return newAbbreviation == abbreviation;
 		}
 
 	}

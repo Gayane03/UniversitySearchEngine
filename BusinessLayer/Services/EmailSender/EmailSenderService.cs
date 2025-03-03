@@ -23,12 +23,12 @@ namespace BusinessLayer.Services.EmailSender
 					MailMessage mailMessage = new MailMessage
 					{
 						From = new MailAddress(fromEmail),
-						Subject = "Email Verification Code",
+						Subject = "Email Verification Code From University Search Engine",
 						Body = $"Your verification code is: {verificationCode}",
 						IsBodyHtml = false,
 					};
 
-					mailMessage.To.Add("gayane.tsaturyan.2020@gmail.com");
+					mailMessage.To.Add(toEmail);
 
 					await client.SendMailAsync(mailMessage);
 				}

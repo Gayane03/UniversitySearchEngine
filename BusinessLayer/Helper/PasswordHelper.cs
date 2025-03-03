@@ -38,7 +38,6 @@ namespace BusinessLayer.Helper
 			string hashString = Convert.ToBase64String(hash);
 			return $"{saltString}:{hashString}";
 		}
-
 		public static bool VerifyPassword(string storedHash, string providedPassword)
 		{
 			string[] parts = storedHash.Split(':');

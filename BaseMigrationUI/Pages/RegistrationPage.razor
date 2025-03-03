@@ -10,113 +10,116 @@
 @inject ISnackbar Snackbar;
 @layout MainLayout;
 
-@if (isRegistrationProcess)
+@if (isLoaded)
 {
-	<MudForm @ref="formRegistration" Validation="registrationRequestValidator.ValidateValue" Model="@registrationModel">
-		<MudCardContent>
+	if (isRegistrationProcess)
+	{
+		<MudForm @ref="formRegistration" Validation="registrationRequestValidator.ValidateValue" Model="@registrationModel">
+			<MudCardContent>
 
 
-			<MudItem>
+				<MudItem>
+					<MudTextField T="string"
+								  @bind-Value="registrationModel.FirstName"
+								  Label="First name"
+								  For="@(() => registrationModel.FirstName)"
+								  Immediate="true" />
+				</MudItem>
+
+				<MudItem>
+					<MudTextField T="string"
+								  @bind-Value="registrationModel.LastName"
+								  Label="Last name"
+								  For="@(() => registrationModel.LastName)"
+								  Immediate="true" />
+				</MudItem>
+
+
 				<MudTextField T="string"
-							  @bind-Value="registrationModel.FirstName"
-							  Label="First name"
-							  For="@(() => registrationModel.FirstName)"
-							  Immediate="true" />
-			</MudItem>
-
-			<MudItem>
-				<MudTextField T="string"
-							  @bind-Value="registrationModel.LastName"
-							  Label="Last name"
-							  For="@(() => registrationModel.LastName)"
-							  Immediate="true" />
-			</MudItem>
-
-
-			<MudTextField T="string"
-						  @bind-Value="registrationModel.Email"
-						  Label="Email"
-						  For="@(() => registrationModel.Email)"
-						  Immediate="true" />
-
-			<MudTextField T="string"
-						  @bind-Value="registrationModel.Password"
-						  Label="Password"
-						  For="@(() => registrationModel.Password)"
-						  Immediate="true" InputType="InputType.Password" />
-
-			<MudTextField T="string"
-						  @bind-Value="registrationModel.RepeatPassword"
-						  Label="RepeatPassword"
-						  For="@(() => registrationModel.RepeatPassword)"
-						  Immediate="true" InputType="InputType.Password" />
-
-
-			<MudCardActions Class="pl-0">
-				<MudGrid Spacing="2" Class="mt-2">
-
-					<MudItem md="12">
-						<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => OnRegister()">
-							@RegisterText
-						</MudButton>
-					</MudItem>
-
-					<MudItem md="12">
-						<MudButton OnClick="() => OpenLoginCard()">
-							@LoginText
-						</MudButton>
-					</MudItem>
-
-				</MudGrid>
-			</MudCardActions>
-
-		</MudCardContent>
-
-	</MudForm>
-}
-else
-{
-	<MudForm @ref="formLogin" Validation="loginRequestValidator.ValidateValue" Model="@loginRequest">
-
-		<MudCardContent>
-
-			<MudItem>
-				<MudTextField T="string"
-							  @bind-Value="loginRequest.Email"
+							  @bind-Value="registrationModel.Email"
 							  Label="Email"
-							  For="@(() => loginRequest.Email)"
+							  For="@(() => registrationModel.Email)"
 							  Immediate="true" />
-			</MudItem>
 
-			<MudItem>
 				<MudTextField T="string"
-							  @bind-Value="loginRequest.Password"
+							  @bind-Value="registrationModel.Password"
 							  Label="Password"
-							  For="@(() => loginRequest.Password)"
+							  For="@(() => registrationModel.Password)"
 							  Immediate="true" InputType="InputType.Password" />
-			</MudItem>
 
-			<MudCardActions Class="pl-0">
-				<MudGrid Spacing="2" Class="mt-2">
+				<MudTextField T="string"
+							  @bind-Value="registrationModel.RepeatPassword"
+							  Label="RepeatPassword"
+							  For="@(() => registrationModel.RepeatPassword)"
+							  Immediate="true" InputType="InputType.Password" />
 
-					<MudItem md="12">
-						<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => OnLogin()">
-							@LoginText
-						</MudButton>
-					</MudItem>
 
-					<MudItem md="12">
-						<MudButton OnClick="() => OpenRegisterCard()">
-							@RegisterText
-						</MudButton>
-					</MudItem>
+				<MudCardActions Class="pl-0">
+					<MudGrid Spacing="2" Class="mt-2">
 
-				</MudGrid>
-			</MudCardActions>
+						<MudItem md="12">
+							<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => OnRegister()">
+								@RegisterText
+							</MudButton>
+						</MudItem>
 
-		</MudCardContent>
-	</MudForm>
+						<MudItem md="12">
+							<MudButton OnClick="() => OpenLoginCard()">
+								@LoginText
+							</MudButton>
+						</MudItem>
 
+					</MudGrid>
+				</MudCardActions>
+
+			</MudCardContent>
+
+		</MudForm>
+	}
+	else
+	{
+		<MudForm @ref="formLogin" Validation="loginRequestValidator.ValidateValue" Model="@loginRequest">
+
+			<MudCardContent>
+
+				<MudItem>
+					<MudTextField T="string"
+								  @bind-Value="loginRequest.Email"
+								  Label="Email"
+								  For="@(() => loginRequest.Email)"
+								  Immediate="true" />
+				</MudItem>
+
+				<MudItem>
+					<MudTextField T="string"
+								  @bind-Value="loginRequest.Password"
+								  Label="Password"
+								  For="@(() => loginRequest.Password)"
+								  Immediate="true" InputType="InputType.Password" />
+				</MudItem>
+
+				<MudCardActions Class="pl-0">
+					<MudGrid Spacing="2" Class="mt-2">
+
+						<MudItem md="12">
+							<MudButton Color="Color.Primary" Variant="Variant.Filled" OnClick="() => OnLogin()">
+								@LoginText
+							</MudButton>
+						</MudItem>
+
+						<MudItem md="12">
+							<MudButton OnClick="() => OpenRegisterCard()">
+								@RegisterText
+							</MudButton>
+						</MudItem>
+
+					</MudGrid>
+				</MudCardActions>
+
+			</MudCardContent>
+		</MudForm>
+
+	}
 }
 
 @code {
@@ -135,6 +138,7 @@ else
 	private LoginRequest loginRequest = new();
 	private LoginResponse? loginResponse;
 
+	private bool isLoaded = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -159,6 +163,8 @@ else
 				navigationManager.NavigateTo(Route.Registration);
 			}
 		}
+
+		isLoaded = true;
 	}
 
 
