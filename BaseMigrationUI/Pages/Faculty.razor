@@ -8,83 +8,97 @@
 @inject ResponseMessageUtile responseMessageUtile;
 @inject LocalStorageHelper localStorageHelper;
 @inject ISnackbar Snackbar;
-
+@layout SearchEngineLayout;
 
 @if (selectedFaculty is not null)
 {
-	<MudCard Class="mt-4">
-		<MudCardContent>
-			<MudGrid>
-				<MudItem xs="12">
-					<MudText Typo="Typo.h6">@selectedFaculty.UniversityName</MudText>
-				</MudItem>
-				<MudItem xs="12">
-					<MudText Typo="Typo.h5">@selectedFaculty.FacultyName</MudText>
-				</MudItem>
-				<MudItem xs="12">
-					<MudText Typo="Typo.subtitle1">Նկարագրություն: @selectedFaculty.FacultyDescription</MudText>
-				</MudItem>
-				<MudItem xs="12">
-					<MudText Typo="Typo.body1">Անվճար տեղերի քանաակ: @selectedFaculty.FreeSpots</MudText>
-				</MudItem>
-				<MudItem xs="12">
-					<MudText Typo="Typo.body1">Վճարովի տեղերի քանակ: @selectedFaculty.PaidSpots</MudText>
-				</MudItem>
-				<MudItem xs="12">
-					<MudText Typo="Typo.body1">Ուսման վարձ: @selectedFaculty.TuitionFee</MudText>
-				</MudItem>
-				<MudItem xs="12">
-					<MudText Typo="Typo.body1">Վերջին տարվա անվճարի անցողիկ միավոր: @selectedFaculty.LastYearMinScoreForFreeTrain</MudText>
-				</MudItem>
-				<MudItem xs="12">
-					<MudText Typo="Typo.body1">Քննություններ: @string.Join(", ", selectedFaculty.EntranceExam ?? new List<string>())</MudText>
-				</MudItem>
-			</MudGrid>
-		</MudCardContent>
-	</MudCard>
+    <MudCard Class="mt-4 rounded-lg shadow-lg" Elevation="6">
+        <MudCardContent Class="p-4">
+            <MudGrid Spacing="2">
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h5" Class="font-bold text-primary">@selectedFaculty.UniversityName</MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.h4" Class="font-semibold">@selectedFaculty.FacultyName</MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.subtitle1" Class="text-gray-600">
+                        <b>Նկարագրություն:</b> @selectedFaculty.FacultyDescription
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12">
+                    <MudText Typo="Typo.body1" Class="text-gray-700">
+                        <b>Անվճար տեղեր:</b> @selectedFaculty.FreeSpots
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12" sm="12">
+                    <MudText Typo="Typo.body1" Class="text-gray-700">
+                        <b>Վճարովի տեղեր:</b> @selectedFaculty.PaidSpots
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.body1" Class="text-gray-700">
+                        <b>Ուսման վարձ:</b> @selectedFaculty.TuitionFee
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.body1" Class="text-gray-700">
+                        <b>Վերջին տարվա անվճարի անցողիկ միավոր:</b> @selectedFaculty.LastYearMinScoreForFreeTrain
+                    </MudText>
+                </MudItem>
+                <MudItem xs="12">
+                    <MudText Typo="Typo.body1" Class="text-gray-700">
+                        <b>Քննություններ:</b> @string.Join(", ", selectedFaculty.EntranceExam ?? new List<string>())
+                    </MudText>
+                </MudItem>
+            </MudGrid>
+        </MudCardContent>
+    </MudCard>
+
 }
+
 @code {
 
-	[Parameter]
-	public int FacultyId { get; set; }
+    [Parameter]
+    public int FacultyId { get; set; }
 
-	public FacultyResponse selectedFaculty { get; set; }
+    public FacultyResponse selectedFaculty { get; set; }
 
-	protected override async Task OnInitializedAsync()
-	{
-		try
-		{
-			var token = await GetAccessToken();
-			Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+    protected override async Task OnInitializedAsync()
+    {
+        try
+        {
+            var token = await GetAccessToken();
+            Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
 
-			var response = await apiController.GetFaculty(token, FacultyId);
-			selectedFaculty = await responseMessageUtile.HandleResponse<FacultyResponse>(response);
-		}
-		catch (SystemException ex)
-		{
-			Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
-		}
-		catch (Exception ex)
-		{
-			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
-		}
-	}
+            var response = await apiController.GetFaculty(token, FacultyId);
+            selectedFaculty = await responseMessageUtile.HandleResponse<FacultyResponse>(response);
+        }
+        catch (SystemException ex)
+        {
+            Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
+        }
+    }
 
-	private async Task<string> GetAccessToken()
-		{
-		try
-		{
-			return await localStorageHelper.GetToken(TokenStorageName.UserAccess);
-		}
-		catch (SystemException ex)
-		{
-			Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
-		}
-		catch (Exception ex)
-		{
-			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
-		}
+    private async Task<string> GetAccessToken()
+    {
+        try
+        {
+            return await localStorageHelper.GetToken(TokenStorageName.UserAccess);
+        }
+        catch (SystemException ex)
+        {
+            Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+        }
+        catch (Exception ex)
+        {
+            Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
+        }
 
-		return null;
-	}
+        return null;
+    }
 }

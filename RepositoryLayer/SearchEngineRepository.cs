@@ -2,6 +2,7 @@
 using RepositoryLayer.Helper;
 using SharedLibrary.DbModels.Response;
 
+
 namespace RepositoryLayer
 {
 	public class SearchEngineRepository : CoreBaseRepository, ISearchEngineRepository
@@ -60,9 +61,52 @@ namespace RepositoryLayer
 
 			return faculty;
 		}
+
+		public async Task<List<FavoriteResponseDB>> GetFavorites(int userId)
+		{
+			Dictionary<string, object>? parameters = null;
+			string? whereConditionBody = null;
+
+			parameters = new Dictionary<string, object>();
+			parameters.Add($"userId", userId);
+
+			whereConditionBody = $"UserId = @userId";
+
+			var favorites = await GetAll<Favorite, FavoriteResponseDB>(ResponseModelGenerator.GetFavorites, parameters, whereConditionBody);
+			return favorites;
+		}
+
+		public async Task AddFavorite(int userId, int facultyId)
+		{
+            var parameters = new Dictionary<string, object>();
+            parameters.Add($"@{nameof(Favorite.UserId)}", userId);
+            parameters.Add($"@{nameof(Favorite.FacultyId)}", facultyId);
+            await Insert<Favorite>(parameters);
+        }
+
+		public async Task RemoveFavorite(int favoriteId)
+		{
+            var whereConditionBody = " Id = @favoriteId";
+
+            var parameters = new Dictionary<string, object>();
+            parameters.Add($"@favoriteId", favoriteId);
+            await Delete<Favorite>(parameters, whereConditionBody);
+
+        }
 	}
 
 	class University { }
 	class Faculty { }
 	class Exam { }
+	public class Favorite {
+      
+		public int UserId { get; set; }	
+        public int FacultyId { get; set; }
+    }
+
+	public class FavoriteResponseDB
+	{
+		public int Id { get; set; }
+		public int FacultyId { get; set; }
+	}
 }

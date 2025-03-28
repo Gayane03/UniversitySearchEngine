@@ -20,6 +20,7 @@ try
 
 	builder.Services.AddTransient<RegistrationRequestValidator>();
 	builder.Services.AddScoped<ResponseMessageUtile>();
+	builder.Services.AddScoped<FavoriteHelper>();
 	builder.Services.AddScoped<ApiController>();
 	builder.Services.AddTransient<VerifyEmailRequestValidator>();
 	builder.Services.AddTransient<LoginRequestValidator>();

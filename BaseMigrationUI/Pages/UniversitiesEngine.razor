@@ -8,6 +8,8 @@
 @inject ResponseMessageUtile responseMessageUtile;
 @inject LocalStorageHelper localStorageHelper;
 @inject ISnackbar Snackbar;
+@inject FavoriteHelper favoriteHelper;
+@layout SearchEngineLayout;
 
 @if (isLoaded)
 {
@@ -42,7 +44,7 @@
 				<MudTable Items="@universityList" Dense="true" T="UniversityResponse"
 						  SelectedItem="@selectedUniversity"
 						  SelectedItemChanged="@OnUniversitySelected"
-						  Class="mb-2">
+						  Class="mb-2" Style="box-shadow: 0 4px 8px rgb(0 77 169);">
 
 					<HeaderContent>
 						<MudTh>Համալսարան</MudTh>
@@ -56,9 +58,11 @@
 				</MudTable>
 			}
 
-			<MudItem xs="12" Class="mb-2">
-				<MudButton OnClick="SearchUniversities" Variant="Variant.Filled" Color="Color.Primary">Որոնել</MudButton>
+			<MudGrid Justify="Justify.FlexEnd">
+				<MudItem xs="12" Class="my-2" Style="text-align: right;">
+					<MudButton OnClick="SearchUniversities" Variant="Variant.Filled" Style="background-color: #c4acda;">Որոնել</MudButton>
 			</MudItem>
+			</MudGrid>
 		}
 		else
 		{
@@ -107,38 +111,52 @@
 			<MudTable Items="@facultyList" Dense="true" T="FacultyResponse"
 					  SelectedItem="@selectedFaculty"
 					  SelectedItemChanged="@OnFacultySelected"
-					  Class="mb-2">
+					  Class="mb-2" Style="box-shadow: 0 4px 8px rgb(0 77 169);">
 
 					<HeaderContent>
 						<MudTh>Ֆակուլտետ</MudTh>
 						<MudTh>Նկրագրություն</MudTh>
-						
+					    <MudTh>Ֆավորիտ</MudTh>
 					</HeaderContent>
 					<RowTemplate>
 						<MudTd DataLabel="Ֆակուլտետ">@context.FacultyName</MudTd>
 						<MudTd DataLabel="Նկրագրություն">@context.FacultyDescription</MudTd>
-					
+					<MudTd DataLabel="Ֆավորիտ" Class="d-flex justify-end">
+						@if (favoriteHelper is not null && favoriteHelper.FavoriteIds is not null)
+						{
+							<MudItem xs="4" Class="d-flex justify-end">
+								<MudIconButton Icon="@(favoriteHelper.IsFavorite(0,context.FacultyId) ? Icons.Material.Filled.Favorite : Icons.Material.Outlined.FavoriteBorder)"
+											   OnClick="() => favoriteHelper.ToggleFavorite(0,context.FacultyId)"
+											   Color="@(favoriteHelper.IsFavorite(0,context.FacultyId) ? Color.Error : Color.Default)" />
+							</MudItem>
+						}
+					</MudTd>
 					</RowTemplate>
 					<PagerContent>
 						<MudTablePager />
 					</PagerContent>
 				</MudTable>
-			
 
-			<MudItem xs="12" Class="my-2">
-				<MudButton OnClick="SearchFaculties" Variant="Variant.Filled" Color="Color.Primary">Որոնել</MudButton>
-			</MudItem>
+			<MudGrid Justify="Justify.FlexEnd">
+				<MudItem xs="12" Class="my-2" Style="text-align: right;">
+					<MudButton OnClick="SearchFaculties" Variant="Variant.Filled" Style="background-color: #c4acda;">Որոնել</MudButton>
+				</MudItem>
+			</MudGrid>
 		}
 	</MudContainer>
-
-	<MudGrid Justify="Justify.FlexEnd">
+	
+@* 	<MudGrid Justify="Justify.FlexEnd">
 		<MudItem Class="my-4" Style="text-align: right;">
 			<MudButton Variant="Variant.Filled" Color="Color.Default" OnClick="Logout">Դուրս գալ համակարգից</MudButton>
 		</MudItem>
-	</MudGrid>
+	</MudGrid> *@
 }
 
 @code {
+
+
+	// public FavoriteHelper favoriteHelper = new();
+	List<FavoriteResponse> favoritesResponseList = null;
 
 	private string selectedExam;
 	private string selectedExam2;
@@ -176,27 +194,31 @@
 
 	protected override async Task OnInitializedAsync()
 	{
-		// isSelectedFaculty = false;
-		var token = await GetAccessToken();
-		Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
-		var firstSelectedProcess = new UniversitiesSearchingRequest() { Page = 1, PerPage = 10 };
-
-		var response = await apiController.GetUniversitiesWithFilter(token, firstSelectedProcess);
-
-		universityList = await responseMessageUtile.HandleResponse<List<UniversityResponse>>(response);
-
-		isLoaded = true;
-	}
-
-	// protected override async Task OnAfterRenderAsync(bool first)
-	// {
-	// 	if (first)
-
-	// 	{ await SearchFaculties(); }
+		try
+		{
 		
+			// isSelectedFaculty = false;
+			var token = await GetAccessToken();
+			Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+			var firstSelectedProcess = new UniversitiesSearchingRequest() { Page = 1, PerPage = 10 };
 
-	// }
+			var response = await apiController.GetUniversitiesWithFilter(token, firstSelectedProcess);
+			universityList = await responseMessageUtile.HandleResponse<List<UniversityResponse>>(response);
 
+
+			favoriteHelper.token = token;
+			await favoriteHelper.RefreshFavorites();
+			favoritesResponseList = favoriteHelper.FavoritesResponseList;
+
+			isLoaded = true;
+		}
+		catch (Exception ex )
+		{
+			
+			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
+		}
+		
+	}
 
 	private async Task Logout()
 	{

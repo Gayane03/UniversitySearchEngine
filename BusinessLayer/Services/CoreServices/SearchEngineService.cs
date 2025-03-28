@@ -19,6 +19,74 @@ namespace BusinessLayer.Services.CoreServices
 			this.mapper = mapper;	
         }
 
+
+		public async Task<Result<List<FavoriteResponse>?>> GetFavorites(int userId)
+		{
+			try
+			{
+				var favorites = await searchEngineRepository.GetFavorites(userId);
+
+				if (favorites is null || !favorites.Any())
+				{
+					return Result<List<FavoriteResponse>?>.Success(null);
+				}
+
+				var favoriteListResponse = new List<FavoriteResponse>();
+
+				foreach (var favorite in favorites)
+				{
+					var faculty = await GetFaculty(favorite.FacultyId);
+
+					if(!faculty.IsSuccess)
+					{
+						return Result<List<FavoriteResponse>>.Failure(Message.FavoriteError);
+					}
+
+					favoriteListResponse.Add(new FavoriteResponse() { Id = favorite.Id, Faculty = faculty.Value });
+				}
+
+
+				if (favoriteListResponse == null || !favoriteListResponse.Any())
+				{
+					return Result<List<FavoriteResponse>>.Failure(Message.EmptyFavorites);
+				}
+
+				return Result<List<FavoriteResponse>>.Success(favoriteListResponse);
+			}
+			catch (Exception ex)
+			{
+				return Result<List<FavoriteResponse>>.Failure(Message.SystemError);
+			}
+		}
+
+		public async Task<Result<bool>> AddFavorites(int userId,FavoriteRequest favoriteRequest)
+		{
+			try
+			{
+				await searchEngineRepository.AddFavorite(userId, favoriteRequest.FacultyId.Value);
+
+				return Result<bool>.Success(true);
+			}
+			catch (Exception ex) 
+			{
+				return Result<bool>.Failure(Message.SystemError);
+			}
+		}
+
+		public async Task<Result<bool>> RemoveFavorite(int favoriteId)
+		{
+			try
+			{
+				await searchEngineRepository.RemoveFavorite(favoriteId);
+
+				return Result<bool>.Success(true);
+			}
+			catch (Exception ex)
+			{
+				return Result<bool>.Failure(Message.SystemError);
+			}
+		}
+
 		public async Task<Result<List<UniversityResponse>>> GetUniversities(UniversitiesSearchingRequest universitiesSearchingRequest)
 		{
 			try
@@ -193,21 +261,6 @@ namespace BusinessLayer.Services.CoreServices
 			}			
 		}
 
-	
-
-		public Task<Result<List<FacultyResponse>>> GetFavorites(int userId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task AddFavorite(int userId, int facultyId)
-		{
-			throw new NotImplementedException();
-		}
-
-		public Task RemoveFavorite(int facultyId)
-		{
-			throw new NotImplementedException();
-		}
+		
 	}
 }

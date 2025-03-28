@@ -4,6 +4,7 @@ using BusinessLayer.Helper;
 using BusinessLayer.Services.CoreServices;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using SharedLibrary.RequestModels.CoreRequests;
 
 namespace SearchUniversityAPI.Controllers
 {
@@ -40,39 +41,34 @@ namespace SearchUniversityAPI.Controllers
 		}
 
 
-		[HttpGet("addFavorite")]
-		public async Task<IActionResult> AddFavorite(int facultyId)
+		[HttpPost("addFavorite")]
+		public async Task<IActionResult> AddFavorite(FavoriteRequest favoriteRequest)
 		{
             var token = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last();
-            UserId = jwtTokenHandlerService.GetUserIdFromToken(token);
+			UserId = jwtTokenHandlerService.GetUserIdFromToken(token);
 
+            var result = await searchEngineService.AddFavorites(UserId, favoriteRequest); // is favorite to true
 
-            await searchEngineService.AddFavorite(UserId, facultyId); // is favorite to true
-
-			//var result = await searchEngineService.GetFavorites(UserId);
-
-			//if (!result.IsSuccess)
-			//{
-			//	return BadRequest(result.Error);
-			//}
+			if (!result.IsSuccess)
+			{
+				return BadRequest(result.Error);
+			}
 
 			return Ok();
 		}
 
 
 		[HttpDelete("removeFavorite")]
-		public async Task<IActionResult> RemoveFavorite(int facultyId)
+		public async Task<IActionResult> RemoveFavorite(int favoriteId)
 		{
 
+            var result = await searchEngineService.RemoveFavorite(favoriteId);
 
-			await searchEngineService.RemoveFavorite(facultyId);
 
-			////var result = await searchEngineService.GetFavorites(UserId);
-
-			//if (!result.IsSuccess)
-			//{
-			//	return BadRequest(result.Error);
-			//}
+			if (!result.IsSuccess)
+			{
+				return BadRequest(result.Error);
+			}
 
 			return Ok();
 		}

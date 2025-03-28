@@ -1,0 +1,67 @@
+﻿@attribute [Route(Route.Information)]
+@layout MainLayout;
+
+<MudContainer MaxWidth="MaxWidth.Large">
+    <MudText Typo="Typo.h4" GutterBottom="true">University Search Engine</MudText>
+
+    <MudText Typo="Typo.body1" GutterBottom="true">
+        Welcome to our University Search Engine, designed to help students find the best universities based on their preferences. This page provides an overview of how the search process works and key features to enhance your experience.
+    </MudText>
+
+    <MudExpansionPanels>
+        <MudExpansionPanel Text="How It Works">
+            <MudText Typo="Typo.body2" GutterBottom="true">
+                Our platform helps students discover universities through the following steps:
+            </MudText>
+            <MudList T="string">
+                <MudListItem><p>Search Universities: Filter universities based on country, courses, fees, and rankings.</p></MudListItem>
+                <MudListItem><p>Compare Programs: Analyze different courses, faculty, and university ratings.</p></MudListItem>
+                <MudListItem><p>Application Guidance: Get step-by-step instructions for applying.</p></MudListItem>
+                <MudListItem><p>Scholarship Information: Find financial aid options and scholarship opportunities.</p></MudListItem>
+                <MudListItem><p>Student Reviews: Read real student experiences and feedback.</p></MudListItem>
+            </MudList>
+        </MudExpansionPanel>
+
+        <MudExpansionPanel Text="Key Features">
+            <MudText Typo="Typo.body2" GutterBottom="true">
+                Our search engine offers various features to simplify university selection:
+            </MudText>
+            <MudList T="string">
+                <MudListItem><p>Advanced Search Filters: Find universities by location, tuition fees, and subject areas.</p></MudListItem>
+                <MudListItem><p>Interactive University Map: Visualize university locations worldwide.</p></MudListItem>
+                <MudListItem><p>Admission Requirements: Get clear insights into eligibility criteria.</p></MudListItem>
+                <MudListItem><p>Application Deadlines: Stay updated on important university deadlines.</p></MudListItem>
+                <MudListItem><p>Alumni Success Stories: Learn about successful graduates and career outcomes.</p></MudListItem>
+            </MudList>
+        </MudExpansionPanel>
+
+        <MudExpansionPanel Text="Application Process">
+            <MudText Typo="Typo.body2" GutterBottom="true">
+                Steps to apply for universities efficiently:
+            </MudText>
+            <MudList T="string">
+                <MudListItem><p>Check Eligibility: Ensure you meet academic and language requirements.</p></MudListItem>
+                <MudListItem><p>Prepare Documents: Submit transcripts, recommendation letters, and personal statements.</p></MudListItem>
+                <MudListItem><p>Apply Online: Complete applications through university portals.</p></MudListItem>
+                <MudListItem><p>Track Application Status: Monitor responses and follow up on required actions.</p></MudListItem>
+                <MudListItem><p>Visa & Accommodation: Get guidance on student visas and housing options.</p></MudListItem>
+            </MudList>
+        </MudExpansionPanel>
+
+        <MudExpansionPanel Text="Support & Contact">
+            <MudText Typo="Typo.body2" GutterBottom="true">
+                Need help? Our support team is available:
+            </MudText>
+            <MudList T="string">
+                <MudListItem>Email: support@universitysearch.com</MudListItem>
+                <MudListItem>Phone: +(123) 456-7890</MudListItem>
+                <MudListItem>Live Chat: Available 24/7</MudListItem>
+                <MudListItem>FAQs: Visit our help center for common questions.</MudListItem>
+            </MudList>
+        </MudExpansionPanel>
+    </MudExpansionPanels>
+</MudContainer>
+
+@code {
+
+}

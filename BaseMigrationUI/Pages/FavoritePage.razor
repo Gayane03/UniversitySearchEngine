@@ -1,0 +1,136 @@
+﻿@attribute [Route(Route.Favorite)]
+@using MudBlazor
+@using SharedLibrary.Enum
+@using SharedLibrary.RequestModels.CoreRequests
+@using SharedLibrary.ResponseModels.CoreResponse
+@inject NavigationManager navigationManager;
+@inject ApiController apiController;
+@inject ResponseMessageUtile responseMessageUtile;
+@inject LocalStorageHelper localStorageHelper;
+@inject ISnackbar Snackbar;
+@inject FavoriteHelper favoriteHelper;
+@layout SearchEngineLayout;
+
+
+<style>
+	.card-hover {
+		transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+	}
+
+	.card-hover:hover {
+		transform: scale(1.03);
+		box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.2);
+		cursor: pointer;
+	}
+
+	.favorite-icon {		
+		top: 10px;
+		right: 10px;
+	}
+</style>
+
+@if (favoritesResponseList is not null)
+{
+	<MudGrid Spacing="3" Justify="Justify.FlexStart">
+		@foreach (var currentFaculty in favoritesResponseList)
+		{
+			<MudItem xs="12" sm="6" md="4" lg="3" xl="3">
+				<MudCard Elevation="10" @onclick="() => NavigateToFaculty(currentFaculty.Id)" Class="rounded-lg card-hover h-full d-flex flex-column align-center text-center"
+						 Style="height: 100%;">
+					<MudCardContent Class="px-4 py-6 d-flex flex-column justify-between align-center" Style="height: 100%;">
+						<MudText Typo="Typo.h6" Class="font-bold">@currentFaculty.Faculty.UniversityName</MudText>
+						<MudText Typo="Typo.h6" Class="text-primary font-semibold mt-2">@currentFaculty.Faculty.FacultyName</MudText>
+						<MudText Typo="Typo.body1" Class="mt-3 px-2"
+								 Style="white-space: normal; word-wrap: break-word; min-height: 60px;">
+							@currentFaculty.Faculty.FacultyDescription
+						</MudText>
+
+						@if (favoriteIds != null)
+						{
+							<MudIconButton Icon="@(favoriteHelper.IsFavorite(currentFaculty.Id) ? Icons.Material.Filled.Favorite : Icons.Material.Outlined.FavoriteBorder)"
+										   OnClick="() => RemoveFavorite(currentFaculty.Id)"
+										   Color="@(favoriteHelper.IsFavorite(currentFaculty.Id) ? Color.Error : Color.Default)"
+										   Class="favorite-icon mt-auto" />
+						}
+					</MudCardContent>
+				</MudCard>
+			</MudItem>
+		}
+	</MudGrid>
+
+}
+
+
+
+@code {
+
+
+	private async Task RemoveFavorite(int facultyId)
+	{
+		favoriteHelper.ToggleFavorite(facultyId);
+		await favoriteHelper.RefreshFavorites(); // Refresh the list
+		UpdateFavoritesList(); // Update UI dynamically
+	}
+	List<FavoriteResponse> favoritesResponseList = null;
+	List<int> favoriteIds = new();
+	// string token;
+
+	protected override async Task OnInitializedAsync()
+	{
+		try
+		{
+			favoriteHelper.token = await GetAccessToken();
+			await favoriteHelper.RefreshFavorites();
+
+			UpdateFavoritesList();
+
+			Snackbar.Configuration.PositionClass = Defaults.Classes.Position.TopCenter;
+
+			if (favoritesResponseList is not null && !favoritesResponseList.Any())
+			{
+				favoriteIds = favoritesResponseList.Select(f => f.Id).ToList();
+			}
+
+		
+		}
+		catch (SystemException ex)
+		{
+			Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+		}
+		catch (Exception ex)
+		{
+			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
+		}
+	}
+
+	private void UpdateFavoritesList()
+	{
+		favoritesResponseList = favoriteHelper.FavoritesResponseList;
+		favoriteIds = favoritesResponseList?.Select(f => f.Id).ToList() ?? new List<int>();
+		StateHasChanged(); // Ensure UI updates
+	}
+
+	private async Task<string> GetAccessToken()
+	{
+		try
+		{
+			return await localStorageHelper.GetToken(TokenStorageName.UserAccess);
+		}
+		catch (SystemException ex)
+		{
+			Snackbar.Add(ex.Message, MudBlazor.Severity.Error);
+		}
+		catch (Exception ex)
+		{
+			Snackbar.Add("Please contact with support team", MudBlazor.Severity.Error);
+		}
+
+		return null;
+	}
+
+	private void NavigateToFaculty(int facultyId)
+	{
+		navigationManager.NavigateTo($"/faculty/{facultyId}");
+	}
+
+}

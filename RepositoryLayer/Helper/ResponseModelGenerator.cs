@@ -49,6 +49,25 @@ namespace RepositoryLayer.Helper
 
 			return universities;
 		}
+
+		public static List<FavoriteResponseDB> GetFavorites(SqlDataReader reader)
+		{
+			var favorites = new List<FavoriteResponseDB>();
+
+			do
+			{
+				var favorite = new FavoriteResponseDB
+				{
+					Id = reader.GetInt32(reader.GetOrdinal("Id")),
+					FacultyId = reader.GetInt32(reader.GetOrdinal("FacultyId")),
+				};
+
+				favorites.Add(favorite);
+
+			} while (reader.Read());
+
+			return favorites;
+		}
 		public static List<FacultyResponseDB> GetFaculties(SqlDataReader reader)
 		{
 			var faculties = new List<FacultyResponseDB>();

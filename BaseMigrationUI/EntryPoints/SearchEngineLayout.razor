@@ -1,0 +1,166 @@
+﻿@inherits LayoutComponentBase
+@inject NavigationManager Navigation
+﻿
+
+
+<style>
+    .layout-container {
+        display: flex;
+        height: 100vh;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .sidebar {
+       
+        background-color: #343a40; /* This is the line you want to adjust */
+        color: #e9ecef;
+        box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+        .sidebar h2 {
+            margin-bottom: 20px;
+            color: #007bff;
+            font-weight: 600;
+        }
+
+    .content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        padding-top: 0;
+    }
+
+    .header {
+        margin-top: 0;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 15vh;
+        background: linear-gradient(135deg, #644b4b, #6610f2);
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+        .header h1 {
+            font-size: 2.5em;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+
+    .footer {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 5vh;
+        background-color: #6e5882;
+        color: #e9ecef;
+        font-size: 0.9em;
+    }
+
+    .content-body {
+        flex-grow: 1;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        padding: 20px;
+        background-color: #b8cde2
+    }
+
+    .mud-card {
+        width: 99%; /* Maximize width usage */
+        max-width: 1800px; /* Further increase max width */
+        padding: 30px; /* Slightly increase padding for visual balance */
+        box-shadow: 0 4px 8px rgb(0 77 169);
+        border-radius: 8px;
+        margin-bottom: 30px; /* Increase bottom margin for spacing */
+    }
+
+    .mud-card-content {
+        width: 100%;
+    }
+
+    .sidebar .nav-link {
+        display: block;
+        padding: 10px 15px;
+        color: #212529;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+        .sidebar .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar .nav-link.active {
+            background-color: #c4acda;
+            color: #001225;
+        }
+
+    /* Adjustments for car list items */
+    .car-list-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        margin: 20px; /* Increase margin for more spacing */
+        width: 32%; /* Keep the width for consistent spacing */
+    }
+
+        .car-list-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 15px; /* Increase bottom margin */
+        }
+
+        /* Adjust image size */
+        .car-list-item img {
+            width: 450px; /* Further increase image width */
+            height: auto;
+        }
+
+        /* Adjust button style */
+        .car-list-item button {
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .car-list-item button:hover {
+                background-color: #0056b3;
+            }
+</style>
+
+<div class="layout-container">
+    <div class="sidebar">
+
+        <NuvMenuUniversitySearchEngine />
+    </div>
+
+    <div class="content">
+        <header>
+            <div class="header">
+                <h1>University Search Engine</h1>
+            </div>
+        </header>
+
+        <div class="content-body">
+            <MudCard Elevation="2" Class="mud-card">
+                <MudCardContent Class="mud-card-content">
+                    @Body
+                </MudCardContent>
+            </MudCard>
+        </div>
+
+        <div class="footer">
+            <footer>
+                <p style="margin: 0">© @DateTime.Now.Year</p>
+            </footer>
+        </div>
+    </div>
+</div>

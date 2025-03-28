@@ -12,9 +12,9 @@ namespace BusinessLayer.Services.CoreServices
 
 
 
-		Task<Result<List<FacultyResponse>>> GetFavorites(int userId);
-		Task AddFavorite(int userId, int facultyId);
-		Task RemoveFavorite(int facultyId);
+		Task<Result<List<FavoriteResponse>?>> GetFavorites(int userId);
+		Task<Result<bool>> AddFavorites(int userId, FavoriteRequest favoriteRequest);
+		Task<Result<bool>> RemoveFavorite(int favoritesId);
 
 
 	}

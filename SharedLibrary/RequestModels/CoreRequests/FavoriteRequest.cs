@@ -2,6 +2,6 @@
 {
 	public class FavoriteRequest
 	{
-		public int? FacultyId { get; set;}
+		public int? FacultyId { get; set;}		
 	}
 }

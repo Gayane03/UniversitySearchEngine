@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Json;
+﻿using SharedLibrary.ResponseModels.CoreResponse;
+using System.Net.Http.Json;
 
 namespace SearchUniversityUI.Helper
 {
@@ -18,12 +19,18 @@ namespace SearchUniversityUI.Helper
                 throw new SystemException(errorMessage);
             }
 
-            var result = await response!.Content.ReadFromJsonAsync<T>();
+			var content = await response.Content.ReadAsStringAsync();
+			if (string.IsNullOrWhiteSpace(content))
+			{
+                return default(T); // Return empty list if API returns no data
+			}
 
-            if (result == null)
-            {
-                throw new SystemException("Response model is null.");
-            }
+			var result = await response!.Content.ReadFromJsonAsync<T>();
+
+            //if (result == null)
+            //{
+            //    throw new SystemException("Response model is null.");
+            //}
 
             return result;
         }

@@ -62,20 +62,20 @@ namespace SearchUniversityUI
 		public async Task<HttpResponseMessage?> GetFavorites(string? token)
 		{
 			httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-			return await httpClient.GetAsync("SearchEngine/getFavorites");
+			return await httpClient.GetAsync("Favorite/getFavorites");
 		}
 
 		public async Task<HttpResponseMessage?> AddFavorite(string? token, FavoriteRequest favoriteRequest)
 		{
 			httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
-			return await httpClient.PostAsJsonAsync("SearchEngine/addFavorite", favoriteRequest);
+			return await httpClient.PostAsJsonAsync("Favorite/addFavorite", favoriteRequest);
 		}
 
 		public async Task<HttpResponseMessage?> RemoveFavorite(string? token, int favoriteId)
 		{
 			httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
 
-			string url = $"SearchEngine/removeFavorite?favoriteId={favoriteId}";
+			string url = $"Favorite/removeFavorite?favoriteId={favoriteId}";
 			return await httpClient.DeleteAsync(url);
 		}
 
