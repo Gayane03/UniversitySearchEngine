@@ -8,7 +8,7 @@ namespace BusinessLayer.Services.EmailSender
 		public async Task SendEmailAsync(string toEmail, string verificationCode)
 		{
 
-			string fromEmail = "gayane.tsaturyan.2020@gmail.com";
+			string fromEmail = "anahit.xnkanosyan@gmail.com";
 			string password = Environment.GetEnvironmentVariable("EMAIL_PASSWORD",EnvironmentVariableTarget.User);
 
 			try
